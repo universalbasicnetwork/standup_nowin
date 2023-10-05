@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <color name="su_clr_black">#000000</color>
+    <color name="su_clr_white">#FFFFFF</color>
+    <color name="su_clr_a">#CC7000</color>
+    <color name="su_clr_b">#FFC580</color>
+    <color name="su_clr_c">#24B243</color>
+    <color name="su_clr_d">#944DFF</color>
+    <color name="su_clr_e">#5200CC</color>
+</resources>

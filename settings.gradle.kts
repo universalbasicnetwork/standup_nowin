@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modified by Jay Bobzin for StandUp! sample application.
  */
 
 pluginManagement {
@@ -30,9 +32,11 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "nowinandroid"
+rootProject.name = "standup_nowin"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+include(":standup:app")
+
 include(":app")
 include(":app-nia-catalog")
 include(":benchmarks")
