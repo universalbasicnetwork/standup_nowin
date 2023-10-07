@@ -5,6 +5,8 @@ package com.jaybobzin.standup.nowin.app
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jaybobzin.standup.nowin.twitter.TwitterData
+import com.jaybobzin.standup.nowin.twitter.TwitterRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -19,10 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class StandupViewModel @Inject constructor(
     @ApplicationContext applicationContext: Context,
-) : ViewModel() {
+    twitter: TwitterRepo = TwitterRepo(applicationContext) ) : ViewModel() {
+
     init {
         viewModelScope.launch {
-
+            twitter.start()
         }
     }
 
@@ -36,4 +39,15 @@ class StandupViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
     )
+
+    val userFlow: StateFlow<TwitterData.User?> = twitter.user().stateIn(
+        initialValue = null,
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+    )
+
+//    fun getFollowers() {
+//
+//    }
+
 }

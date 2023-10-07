@@ -29,15 +29,19 @@ class StandupActivity : ComponentActivity() {
     @Composable
     private fun ActivityComposable() {
         val countdownVal = viewModel.countdownFlow.collectAsStateWithLifecycle().value
+        val user = viewModel.userFlow.collectAsStateWithLifecycle().value
         LazyColumn {
             countdownVal?.let {
                 item(it) {
                     Text(if (it > 0) "$it" else "Stand\nUp!")
                 }
             }
+            user?.let {
+                item(user) {
+                    Text("${it.username}(${it.uid}")
+                }
+            }
         }
-
-
     }
 }
 
