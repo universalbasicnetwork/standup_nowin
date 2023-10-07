@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -19,6 +20,11 @@ import javax.inject.Inject
 class StandupViewModel @Inject constructor(
     @ApplicationContext applicationContext: Context,
 ) : ViewModel() {
+    init {
+        viewModelScope.launch {
+
+        }
+    }
 
     val countdownFlow: StateFlow<Int?> = flow {
         for (i in 3 downTo 0) {
