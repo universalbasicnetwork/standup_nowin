@@ -6,16 +6,23 @@ package com.jaybobzin.standup.nowin.twitter
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.room.Room
 import com.jaybobzin.standup.nowin.app.BuildConfig
 import com.jaybobzin.standup.nowin.twitter.TwitterData.User
 import com.twitter.clientlib.TwitterCredentialsBearer
 import com.twitter.clientlib.api.TwitterApi
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 private const val JAYBOBZIN = "jaybobzin"
 
 class TwitterRepo(val applicationContext: Context) {
+
+    val coroutineDispatcher : CoroutineDispatcher = Dispatchers.IO
 
     val db = Room.databaseBuilder(
         applicationContext,
@@ -25,16 +32,20 @@ class TwitterRepo(val applicationContext: Context) {
     val apiInstance: TwitterApi = TwitterApi(TwitterCredentialsBearer(BuildConfig.twitter_bearer));
 
     suspend fun start() {
-        db.dao().user(JAYBOBZIN).collect {
-            if (it == null) {
-                val msg = "User not found"
-                warn(msg)
-                val userResponse = apiInstance.users().findUserByUsername(JAYBOBZIN).execute()
-                val user = userResponse.data
-                if (user == null) {
-                    warn("Data returned null")
-                } else {
-                    db.dao().insert(convert(user))
+        coroutineScope {
+            launch(coroutineDispatcher) {
+                db.dao().user(JAYBOBZIN).collect {
+                    if (it == null) {
+                        val msg = "User not found"
+                        warn(msg)
+                        val userResponse = apiInstance.users().findUserByUsername(JAYBOBZIN).execute()
+                        val user = userResponse.data
+                        if (user == null) {
+                            warn("Data returned null")
+                        } else {
+                            db.dao().insert(convert(user))
+                        }
+                    }
                 }
             }
         }
@@ -51,8 +62,12 @@ class TwitterRepo(val applicationContext: Context) {
         )
     }
 
-    private fun warn(msg: String) {
-        Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+    private suspend fun warn(msg: String) {
+        coroutineScope {
+            launch(AndroidUiDispatcher.Main) {
+                Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 }

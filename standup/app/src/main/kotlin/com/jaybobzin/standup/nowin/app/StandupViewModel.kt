@@ -21,8 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class StandupViewModel @Inject constructor(
     @ApplicationContext applicationContext: Context,
-    twitter: TwitterRepo = TwitterRepo(applicationContext) ) : ViewModel() {
+) : ViewModel() {
 
+    val twitter: TwitterRepo = TwitterRepo(applicationContext)
     init {
         viewModelScope.launch {
             twitter.start()

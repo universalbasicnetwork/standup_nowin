@@ -19,7 +19,11 @@ object TwitterData {
 
     const val dbName = "TwitterDb"
 
-    @Database(entities = [User::class, Connection::class], version = 1)
+    @Database(
+        version = 1,
+        entities = [User::class, Connection::class],
+        exportSchema = true
+    )
     abstract class Db : RoomDatabase() {
         abstract fun dao(): Dao
     }
@@ -52,6 +56,7 @@ object TwitterData {
 
     @Entity
     data class Connection(
+        @PrimaryKey(autoGenerate = true) val id: Long,
         @ColumnInfo(name="follower_uid") val followerUid: String,
         @ColumnInfo(name="following_uid") val followingUid: String,
     )

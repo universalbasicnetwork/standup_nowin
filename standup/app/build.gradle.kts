@@ -55,5 +55,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.twitter)
+    implementation(libs.twitter) {
+        exclude(group = "org.apache.oltu.oauth2")
+    }
 }
