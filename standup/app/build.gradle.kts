@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.twitter) {
-        exclude(group = "org.apache.oltu.oauth2")
+        exclude(group = "org.apache.oltu.oauth2", module="org.apache.oltu.oauth2.client")
+        exclude(group = "javax.ws.rs", module = "javax.ws.rs-api")
     }
 }
