@@ -37,7 +37,7 @@ class StandupActivity : ComponentActivity() {
                 }
             }
             user?.let {
-                item(user) {
+                item(user.uid) {
                     Text("${it.username}(${it.uid}")
                 }
             }

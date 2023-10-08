@@ -50,7 +50,7 @@ object TwitterData {
     }
     @Entity
     data class User (
-        @PrimaryKey val uid: String,
+        @PrimaryKey val uid: Long,
         @ColumnInfo(name="username") val username: String
     )
 

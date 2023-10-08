@@ -10,26 +10,42 @@ import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.room.Room
 import com.jaybobzin.standup.nowin.app.BuildConfig
 import com.jaybobzin.standup.nowin.twitter.TwitterData.User
-import com.twitter.clientlib.TwitterCredentialsBearer
-import com.twitter.clientlib.api.TwitterApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import twitter4j.Twitter
 
 private const val JAYBOBZIN = "jaybobzin"
 
-class TwitterRepo(val applicationContext: Context) {
+class TwitterRepo(private val applicationContext: Context) {
 
-    val coroutineDispatcher : CoroutineDispatcher = Dispatchers.IO
+    private val coroutineDispatcher : CoroutineDispatcher = Dispatchers.IO
 
     val db = Room.databaseBuilder(
         applicationContext,
         TwitterData.Db::class.java, TwitterData.dbName
     ).build()
 
-    val apiInstance: TwitterApi = TwitterApi(TwitterCredentialsBearer(BuildConfig.twitter_bearer));
+    val api : Twitter = Twitter.newBuilder()
+        .prettyDebugEnabled(BuildConfig.DEBUG)
+        .oAuthConsumer(BuildConfig.twitter_api_key, BuildConfig.twitter_api_secret)
+        .oAuthAccessToken(BuildConfig.twitter_access_token, BuildConfig.twitter_access_secret)
+        .build()
+
+//    val api = TwitterFactory(ConfigurationBuilder()
+//        .setDebugEnabled(BuildConfig.DEBUG)
+//        .setPrettyDebugEnabled(BuildConfig.DEBUG)
+//        .setOAuthConsumerKey(BuildConfig.twitter_api_key)
+//        .setOAuthConsumerSecret(BuildConfig.twitter_api_secret)
+//        .setOAuthAccessToken(BuildConfig.twitter_access_token)
+//        .setOAuthAccessTokenSecret(BuildConfig.twitter_access_secret)
+//        .setJSONStoreEnabled(true)
+//        .build())
+//        .instance
+
+    //    val apiInstance: TwitterApi = TwitterApi(TwitterCredentialsBearer(BuildConfig.twitter_bearer))
 
     suspend fun start() {
         coroutineScope {
@@ -38,8 +54,10 @@ class TwitterRepo(val applicationContext: Context) {
                     if (it == null) {
                         val msg = "User not found"
                         warn(msg)
-                        val userResponse = apiInstance.users().findUserByUsername(JAYBOBZIN).execute()
-                        val user = userResponse.data
+//                        val userResponse = apiInstance.users().findUserByUsername(JAYBOBZIN).execute()
+//                        val userResponse = api.v1.getUsersBy(usernames = arrayOf(JAYBOBZIN))
+                        val userResponse = api.v1().users().showUser(JAYBOBZIN)
+                        val user = userResponse
                         if (user == null) {
                             warn("Data returned null")
                         } else {
@@ -55,10 +73,10 @@ class TwitterRepo(val applicationContext: Context) {
         return db.dao().user(JAYBOBZIN)
     }
 
-    private fun convert(user: com.twitter.clientlib.model.User): TwitterData.User {
+    private fun convert(user: twitter4j.v1.User): TwitterData.User {
         return TwitterData.User(
             uid = user.id,
-            username = user.username
+            username = user.screenName,
         )
     }
 
