@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+internal const val JAYBOBZIN = "jaybobzin"
 
 @HiltViewModel
 class StandupViewModel @Inject constructor(
@@ -26,7 +27,7 @@ class StandupViewModel @Inject constructor(
     val twitter: TwitterRepo = TwitterRepo(applicationContext)
     init {
         viewModelScope.launch {
-            twitter.start()
+            twitter.start(JAYBOBZIN)
         }
     }
 
@@ -41,14 +42,23 @@ class StandupViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(),
     )
 
-    val userFlow: StateFlow<TwitterData.User?> = twitter.user().stateIn(
+    fun user(uid: Long): StateFlow<TwitterData.User?> = twitter.dao().user(uid).stateIn(
         initialValue = null,
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
     )
 
-//    fun getFollowers() {
-//
-//    }
+    fun user(username: String): StateFlow<TwitterData.User?> = twitter.dao().user(username).stateIn(
+        initialValue = null,
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+    )
+
+    fun connections(uid: Long) = twitter.dao().connections(uid).stateIn(
+            initialValue = null,
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+        )
+
 
 }

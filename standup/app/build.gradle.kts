@@ -61,4 +61,6 @@ dependencies {
 //        exclude(group = "org.apache.oltu.oauth2", module="org.apache.oltu.oauth2.client")
 //        exclude(group = "javax.ws.rs", module = "javax.ws.rs-api")
 //    }
+    implementation("com.google.code.gson:gson:2.9.0") // Check for the latest version.
+
 }
