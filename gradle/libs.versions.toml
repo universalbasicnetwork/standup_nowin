@@ -55,7 +55,7 @@ room = "2.5.2"
 secrets = "2.0.1"
 turbine = "0.12.1"
 twitter-api-java-sdk = "2.0.3"
-twitter4j-core = "4.1.1"
+twitter4j-core = "4.0.7"
 twitter4j-v2 = "1.4.2"
 
 [libraries]

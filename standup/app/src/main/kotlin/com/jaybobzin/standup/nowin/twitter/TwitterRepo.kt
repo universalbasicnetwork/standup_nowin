@@ -19,8 +19,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import twitter4j.PaginationToken
 import twitter4j.Twitter
-import twitter4j.v1.PagableResponseList
+import twitter4j.TwitterFactory
+import twitter4j.UsersResponse
+import twitter4j.conf.ConfigurationBuilder
+import twitter4j.v2
 
 private const val PROFILE_UPDATE_MILLIS = 1000 * 60 * 60 * 24
 private const val CONNECTION_UPDATE_MILLIS = 1000 * 60 * 60 * 24
@@ -28,7 +32,7 @@ private const val CONNECTION_UPDATE_MILLIS = 1000 * 60 * 60 * 24
 class TwitterRepo(private val applicationContext: Context) {
 
     private val gson = Gson()
-    private val coroutineDispatcher : CoroutineDispatcher = Dispatchers.IO
+    private val networkDispatcher : CoroutineDispatcher = Dispatchers.IO
 
     private val db = Room.databaseBuilder(
         applicationContext,
@@ -36,14 +40,26 @@ class TwitterRepo(private val applicationContext: Context) {
         .fallbackToDestructiveMigration()
         .build()
 
-    private val api : Twitter = Twitter.newBuilder()
-        .prettyDebugEnabled(BuildConfig.DEBUG)
-        .oAuthConsumer(BuildConfig.twitter_api_key, BuildConfig.twitter_api_secret)
-        .oAuthAccessToken(BuildConfig.twitter_access_token, BuildConfig.twitter_access_secret)
+    val conf = ConfigurationBuilder()
+        .setDebugEnabled(BuildConfig.DEBUG)
+        .setPrettyDebugEnabled(BuildConfig.DEBUG)
+        .setJSONStoreEnabled(true)
+        .setApplicationOnlyAuthEnabled(true)
+        .setOAuthConsumerKey(BuildConfig.twitter_api_key)
+        .setOAuthConsumerSecret(BuildConfig.twitter_api_secret)
+        .setOAuthAccessToken(BuildConfig.twitter_access_token)
+        .setOAuthAccessTokenSecret(BuildConfig.twitter_access_secret)
         .build()
 
+    private val api : Twitter = TwitterFactory(conf).instance
+
     suspend fun start(defaultUsername: String) {
-        fetchUser(defaultUsername)
+        coroutineScope {
+            launch(networkDispatcher) {
+                val oauth2Token = api.oAuth2Token
+                fetchUser(defaultUsername)
+            }
+        }
     }
 
     private suspend fun fetchUser(username: String, force: Boolean = false) {
@@ -51,7 +67,7 @@ class TwitterRepo(private val applicationContext: Context) {
             val readDao = db.read()
             val writeDao = db.write()
 
-            launch(coroutineDispatcher) {
+            launch(networkDispatcher) {
                 val currentTime = System.currentTimeMillis()
                 readDao.user(username).collect { existingUser ->
                     if (force
@@ -59,7 +75,7 @@ class TwitterRepo(private val applicationContext: Context) {
                         || currentTime - existingUser.updatedAt < PROFILE_UPDATE_MILLIS
                     ) {
                         warn("Fetching user: $username")
-                        val t4jUser = api.v1().users().showUser(username)
+                        val t4jUser = api.users().showUser(username)
                         if (t4jUser == null) {
                             warn("Data returned null for $username")
                         } else {
@@ -82,7 +98,7 @@ class TwitterRepo(private val applicationContext: Context) {
 
     private suspend fun fetchConnections(user: User, force: Boolean = false) {
         coroutineScope {
-            launch(coroutineDispatcher) {
+            launch(networkDispatcher) {
                 val currentTime = System.currentTimeMillis()
                 val readDao = db.read()
                 val writeDao = db.write()
@@ -99,13 +115,13 @@ class TwitterRepo(private val applicationContext: Context) {
                     val users : MutableSet<User> = mutableSetOf()
                     val connections: MutableSet<Connection> = mutableSetOf()
 
-                    var followers : PagableResponseList<twitter4j.v1.User>? =null
-                    while (followers == null || followers.hasNext()) {
-                        followers = api.v1().friendsFollowers().getFollowersList(user.uid,
-                            followers?.nextCursor ?: 0, 200)
+                    var followers : UsersResponse? = null
+                    var nextToken : PaginationToken? = null
+                    while (followers == null || nextToken != null ) {
+                        followers = api.v2.getFollowerUsers(user.uid)
+                        nextToken = followers.meta?.nextToken
 
-
-                        followers?.forEach {follower ->
+                        followers.users.forEach { follower ->
                             users.add(User.from(gson, follower, currentTime))
                             connections.add(Connection(
                                 followerUid = follower.id,

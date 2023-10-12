@@ -16,6 +16,9 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
+import twitter4j.User2
+
+typealias ApiUser = User2
 
 object TwitterData {
 
@@ -71,8 +74,16 @@ object TwitterData {
         @ColumnInfo(name="json") val json: String
     ) {
         companion object {
-            fun from(gson: Gson, user: twitter4j.v1.User, currentTime: Long) : User{
+            fun from(gson: Gson, user: twitter4j.User, currentTime: Long) : User{
+                return TwitterData.User(
+                    uid = user.id,
+                    username = user.screenName,
+                    updatedAt = currentTime,
+                    json = gson.toJson(user)
 
+                )
+            }
+            fun from(gson: Gson, user: ApiUser, currentTime: Long) : User{
                 return TwitterData.User(
                     uid = user.id,
                     username = user.screenName,
@@ -84,11 +95,11 @@ object TwitterData {
         }
 
         @Ignore
-        private var t4jUser: twitter4j.v1.User? = null
-        fun user(gson: Gson) : twitter4j.v1.User {
+        private var t4jUser: ApiUser? = null
+        fun user(gson: Gson) : ApiUser {
             val t4jUser = this.t4jUser ?: gson.fromJson(
                 json,
-                twitter4j.v1.User::class.java,
+                ApiUser::class.java,
             )
             if (this.t4jUser == null) this.t4jUser = t4jUser
             return t4jUser
