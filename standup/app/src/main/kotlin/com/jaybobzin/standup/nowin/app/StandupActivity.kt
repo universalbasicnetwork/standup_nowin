@@ -6,12 +6,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "StandupActivity"
 
+@AndroidEntryPoint
 class StandupActivity : ComponentActivity() {
 
     val viewModel: StandupViewModel by viewModels()
@@ -26,8 +29,12 @@ class StandupActivity : ComponentActivity() {
     @Composable
     private fun ActivityComposable() {
         val countdownVal = viewModel.countdownFlow.collectAsStateWithLifecycle().value
-        countdownVal?.let {
-            Text(if (it > 0) "$it" else "Stand\nUp!")
+        LazyColumn {
+            countdownVal?.let {
+                item(it) {
+                    Text(if (it > 0) "$it" else "Stand\nUp!")
+                }
+            }
         }
     }
 }

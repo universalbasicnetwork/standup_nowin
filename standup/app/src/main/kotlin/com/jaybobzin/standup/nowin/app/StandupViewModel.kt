@@ -2,19 +2,23 @@
 
 package com.jaybobzin.standup.nowin.app
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.SharingStarted.Companion
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
+
 @HiltViewModel
-class StandupViewModel @Inject constructor( ) : ViewModel() {
+class StandupViewModel @Inject constructor(
+    @ApplicationContext applicationContext: Context,
+) : ViewModel() {
 
     val countdownFlow: StateFlow<Int?> = flow {
         for (i in 3 downTo 0) {
@@ -26,6 +30,4 @@ class StandupViewModel @Inject constructor( ) : ViewModel() {
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
     )
-
-
 }
