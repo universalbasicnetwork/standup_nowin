@@ -55,12 +55,12 @@ dependencies {
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.twitter4j.core)
-    implementation(libs.twitter4j.v2)
-//    implementation(libs.twitter.api.java.sdk) {
-//        exclude(group = "org.apache.oltu.oauth2", module="org.apache.oltu.oauth2.client")
-//        exclude(group = "javax.ws.rs", module = "javax.ws.rs-api")
-//    }
+//    implementation(libs.twitter4j.core)
+//    implementation(libs.twitter4j.v2)
+    implementation(libs.twitter.api.java.sdk) {
+        exclude(group = "org.apache.oltu.oauth2", module="org.apache.oltu.oauth2.client")
+        exclude(group = "javax.ws.rs", module = "javax.ws.rs-api")
+    }
     implementation("com.google.code.gson:gson:2.9.0") // Check for the latest version.
 
 }

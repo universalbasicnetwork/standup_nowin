@@ -40,18 +40,7 @@ class TwitterRepo(private val applicationContext: Context) {
         .fallbackToDestructiveMigration()
         .build()
 
-    val conf = ConfigurationBuilder()
-        .setDebugEnabled(BuildConfig.DEBUG)
-        .setPrettyDebugEnabled(BuildConfig.DEBUG)
-        .setJSONStoreEnabled(true)
-        .setApplicationOnlyAuthEnabled(true)
-        .setOAuthConsumerKey(BuildConfig.twitter_api_key)
-        .setOAuthConsumerSecret(BuildConfig.twitter_api_secret)
-        .setOAuthAccessToken(BuildConfig.twitter_access_token)
-        .setOAuthAccessTokenSecret(BuildConfig.twitter_access_secret)
-        .build()
 
-    private val api : Twitter = TwitterFactory(conf).instance
 
     suspend fun start(defaultUsername: String) {
         coroutineScope {
