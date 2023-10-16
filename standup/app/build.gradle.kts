@@ -1,9 +1,13 @@
 /* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 
 plugins {
-    id("nowinandroid.android.application")
-    id("nowinandroid.android.application.compose")
-    id("nowinandroid.android.hilt")
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.nowinandroid.android.application)
+    alias(libs.plugins.nowinandroid.android.application.compose)
+    alias(libs.plugins.nowinandroid.android.application.flavors)
+    alias(libs.plugins.nowinandroid.android.hilt)
+    alias(libs.plugins.nowinandroid.android.room)
+    alias(libs.plugins.secrets)
 }
 
 android {
@@ -19,11 +23,21 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
         }
     }
+
+//    productFlavors {
+//        dev {
+//            resourceConfigurations "en", "xxhdpi"
+//        }
+//    }
 
     packaging {
         resources {
@@ -32,12 +46,26 @@ android {
     }
 }
 
+configurations {
+    all {
+        exclude( group= "org.apache.httpcomponents", module= "httpclient")
+    }
+}
+
 dependencies {
+    // TODO
+    implementation(projects.standup.integration.youtube)
+
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.timber)
+
 }
