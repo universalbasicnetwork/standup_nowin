@@ -3,5 +3,4 @@ package com.jaybobzin.standup.nowin.app
 
 import android.app.Application
 
-class StandupApplication : Application() { }
-
+class StandupApplication : Application()
