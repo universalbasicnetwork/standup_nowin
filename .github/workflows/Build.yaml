@@ -16,6 +16,11 @@ jobs:
     timeout-minutes: 90
 
     steps:
+      - name: Checkout su/_main
+        uses: actions/checkout@v3
+        with:
+          ref: "su/_main"
+
       - name: Checkout
         uses: actions/checkout@v3
 

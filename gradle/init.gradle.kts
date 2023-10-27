@@ -12,6 +12,8 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
+ *
+ *   Modified by Jay Bobzin for StandUp! sample application
  */
 
 val ktlintVersion = "0.48.1"
@@ -31,7 +33,9 @@ initscript {
 rootProject {
     subprojects {
         apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
+        // only check changes from _main
         extensions.configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+            ratchetFrom("origin/su/_main")
             kotlin {
                 target("**/*.kt")
                 targetExclude("**/build/**/*.kt")
