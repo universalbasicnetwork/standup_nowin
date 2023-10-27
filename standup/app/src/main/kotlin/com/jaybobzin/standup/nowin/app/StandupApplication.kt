@@ -6,12 +6,13 @@ import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
 private const val TAG = "StandupApplication"
+
 @HiltAndroidApp
 class StandupApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
-            Timber.plant( SuTimberTree() )
+            Timber.plant(SuTimberTree())
         }
     }
 }

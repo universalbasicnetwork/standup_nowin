@@ -1,26 +1,30 @@
 /* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.nowin.app
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.PasswordCredential
+import androidx.credentials.PublicKeyCredential
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jaybobzin.standup.integration.youtube.YoutubeService.YtBinder
-import com.jaybobzin.standup.integration.youtube.YoutubeService.YtServiceImpl
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption.Builder
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 private const val TAG = "StandupActivity"
@@ -28,115 +32,94 @@ private const val TAG = "StandupActivity"
 @AndroidEntryPoint
 class StandupActivity : ComponentActivity() {
 
-    companion object {
-        const val SIGN_IN_REQUEST_CODE = 1001
-    }
+    private val viewModel: StandupViewModel by viewModels()
 
-    val viewModel: StandupViewModel by viewModels()
+    private lateinit var credentialManager: CredentialManager
 
-
-    private val connection = object : ServiceConnection {
-
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance.
-            viewModel.ytBound(service as YtBinder)
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            viewModel.ytBound(null)
-        }
-    }
-
+    val ioScope = CoroutineScope(Dispatchers.IO)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.tag(TAG).i("onCreate($savedInstanceState)")
+        Timber.tag(TAG).i("onCreate")
+        credentialManager = CredentialManager.create(this)
+
         setContent {
             ActivityComponent.Content()
         }
-    }
 
-    override fun onStart() {
-        super.onStart()
-        Intent(this, YtServiceImpl::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-    }
+        val googleIdOption: GetGoogleIdOption = Builder()
+            .setFilterByAuthorizedAccounts(true)
+            .setAutoSelectEnabled(true)
+            .setServerClientId(BuildConfig.google_server_client_id)
+            .build()
 
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
-        viewModel.ytBound(null)
-    }
-    /*
-   * Checks whether the user is signed in. If so, executes the specified
-   * function. If the user is not signed in, initiates the sign-in flow,
-   * specifying the function to execute after the user signs in.
-   */
-    private fun fitSignIn() {
-        if (oAuthPermissionsApproved()) {
-            readDailySteps()
-        } else {
-            GoogleSignIn.requestPermissions(
-                this,
-                SIGN_IN_REQUEST_CODE,
-                getGoogleAccount(),
-                fitnessOptions
-            )
-        }
-    }
+        val request: GetCredentialRequest = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
 
-    private fun oAuthPermissionsApproved() =
-        GoogleSignIn.hasPermissions(getGoogleAccount(), fitnessOptions)
-
-    /*
-     * Gets a Google account for use in creating the fitness client. This is
-     * achieved by either using the last signed-in account, or if necessary,
-     * prompting the user to sign in. It's better to use the
-     * getAccountForExtension() method instead of the getLastSignedInAccount()
-     * method because the latter can return null if there has been no sign in
-     * before.
-     */
-    private fun getGoogleAccount(): GoogleSignInAccount =
-        GoogleSignIn.getAccountForExtension(requireContext(), fitnessOptions)
-
-    /*
-     * Handles the callback from the OAuth sign in flow, executing the function
-     * after sign-in is complete.
-     */
-    override fun onActivityResult(
-        requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            RESULT_OK -> {
-                readDailySteps()
-            }
-            else -> {
-                // Handle error.
+        ioScope.launch {
+            try {
+                val result = credentialManager.getCredential(
+                    context = this@StandupActivity,
+                    request = request,
+                )
+                handleSignIn(result)
+            } catch (e: GetCredentialException) {
+                Timber.tag(TAG).e(e, "Failed to get credential")
+                viewModel.success.value = -1
             }
         }
     }
 
-    /*
-     * Reads the current daily step total.
-     */
-    private fun readDailySteps() {
-        Fitness.getHistoryClient(requireContext(), getGoogleAccount())
-            .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
-            .addOnSuccessListener { dataSet ->
-                val total = when {
-                    dataSet.isEmpty -> 0
-                    else -> dataSet.dataPoints.first()
-                        .getValue(Field.FIELD_STEPS).asInt()
+    fun handleSignIn(result: GetCredentialResponse) {
+        // Handle the successfully returned credential.
+        val credential = result.credential
+
+        when (credential) {
+            is PublicKeyCredential -> {
+                // Share responseJson such as a GetCredentialResponse on your server to
+                // validate and authenticate
+                val responseJson = credential.authenticationResponseJson
+                Timber.tag(TAG).i("Got response json: %s", responseJson)
+                viewModel.success.value = 3
+            }
+
+            is PasswordCredential -> {
+                // Send ID and password to your server to validate and authenticate.
+                val username = credential.id
+                val password = credential.password
+                Timber.tag(TAG).i("Got un $username and pw(${password.length}")
+                viewModel.success.value = 2
+            }
+
+            is CustomCredential -> {
+                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    try {
+                        // Use googleIdTokenCredential and extract id to validate and
+                        // authenticate on your server.
+                        val googleIdTokenCredential =
+                            GoogleIdTokenCredential.createFrom(credential.data)
+                        Timber.tag(TAG).i("Got googleIdToken $googleIdTokenCredential")
+                        viewModel.success.value = 1
+                    } catch (e: GoogleIdTokenParsingException) {
+                        Timber.tag(TAG).e(e, "Received an invalid google id token response")
+                        viewModel.success.value = -1
+                    }
+                } else {
+                    // Catch any unrecognized custom credential type here.
+                    Timber.tag(TAG).e("Unexpected type of credential")
+                    viewModel.success.value = -1
                 }
+            }
 
-                Log.i(TAG, "Total steps: $total")
+            else -> {
+                // Catch any unrecognized credential type here.
+                Timber.tag(TAG).e("Unexpected type of credential")
+                viewModel.success.value = -1
             }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "There was a problem getting the step count.", e)
-            }
+        }
     }
-
 }
+
 private object ActivityComponent {
 
     @Composable
@@ -148,8 +131,18 @@ private object ActivityComponent {
         LazyColumn {
             countdownVal?.let {
                 ytBinder?.countdown(it)
-                item(it) {
+                item {
                     Text(if (it > 0) "$it" else "Stand\nUp!")
+                }
+                item {
+                    Text(
+                        when (viewModel.success.value) {
+                            0 -> "Loading"
+                            1 -> "Success"
+                            -1 -> "Failure"
+                            else -> "huh? ${viewModel.success.value}"
+                        },
+                    )
                 }
             }
         }

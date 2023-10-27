@@ -1,3 +1,6 @@
+# standup ignores
+*.swp
+
 # built application files
 *.apk
 *.ap_

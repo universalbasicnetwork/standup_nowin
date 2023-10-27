@@ -1,6 +1,4 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 
 plugins {
     alias(libs.plugins.nowinandroid.android.library)

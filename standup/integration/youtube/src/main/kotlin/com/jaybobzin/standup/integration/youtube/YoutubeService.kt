@@ -1,7 +1,4 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
-
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.integration.youtube
 
 import android.app.PendingIntent
@@ -12,13 +9,12 @@ import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
+import javax.inject.Inject
 
 private const val TAG = "YoutubeService"
 
@@ -28,15 +24,18 @@ object YoutubeService {
 
         val countdownFlow: Flow<Int?>
     }
-    class YtServiceImpl : Service() {
 
+    @AndroidEntryPoint
+    class YtServiceImpl() : Service() {
+
+        @Inject lateinit var ytManager: YoutubeManager
         private val binder = LocalBinder()
 
         inner class LocalBinder : Binder(), YtBinder {
             override val countdownFlow: Flow<Int?> = flow {
                 for (i in 3 downTo 0) {
                     emit(i)
-                    delay(2000)  // delay for 2 seconds
+                    delay(2000) // delay for 2 seconds
                 }
             }
 
@@ -69,7 +68,6 @@ object YoutubeService {
 
         // This method is part of your Service or any other component where you're creating the notification.
         private fun getLauncherActivityPendingIntent(): PendingIntent? {
-
             // Create an intent that looks for the main launcher activity.
             val launcherActivityIntent = Intent(Intent.ACTION_MAIN)
             launcherActivityIntent.addCategory(Intent.CATEGORY_LAUNCHER)
