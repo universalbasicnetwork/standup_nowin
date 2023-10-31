@@ -27,7 +27,7 @@ class StandupActivity : ComponentActivity() {
 
     private val viewModel: StandupViewModel by viewModels()
 
-    private var connection : YtConnection? = null
+    private var connection: YtConnection? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.tag(TAG).i("onCreate")
@@ -55,7 +55,6 @@ class StandupActivity : ComponentActivity() {
         }
         viewModel.ytBound(null)
     }
-
 }
 
 private object ActivityComponent {
@@ -90,7 +89,7 @@ private object ActivityComponent {
     }
 }
 
-class YtConnection(private val viewModel : StandupViewModel) : ServiceConnection {
+class YtConnection(private val viewModel: StandupViewModel) : ServiceConnection {
     override fun onServiceConnected(className: ComponentName, service: IBinder) {
         // We've bound to LocalService, cast the IBinder and get LocalService instance.
         viewModel.ytBound(service as SuForegroundServiceBinder)

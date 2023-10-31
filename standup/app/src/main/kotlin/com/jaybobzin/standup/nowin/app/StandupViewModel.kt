@@ -1,16 +1,9 @@
 /* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.nowin.app
 
-import android.content.ComponentName
 import android.content.Context
-import android.content.ServiceConnection
-import android.os.IBinder
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
 import com.jaybobzin.standup.integration.youtube.Youtube
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StandupViewModel @Inject constructor(
     @ApplicationContext applicationContext: Context,
-    val ytManager: Youtube.Manager
+    val ytManager: Youtube.Manager,
 ) : ViewModel() {
 
     private val mutableYtBinder: MutableStateFlow<SuForegroundServiceBinder?> = MutableStateFlow(null)

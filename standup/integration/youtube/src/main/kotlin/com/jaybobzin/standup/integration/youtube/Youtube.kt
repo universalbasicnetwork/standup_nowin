@@ -36,7 +36,6 @@ object Youtube {
         val success: MutableState<Int> = mutableIntStateOf(0)
 
         fun loginGoogle(context: Context, googleServerId: String) {
-
             credentialManager = CredentialManager.create(context)
 
             val googleIdOption: GetGoogleIdOption = Builder()
@@ -122,7 +121,7 @@ object Youtube {
             val idToken: String,
             val phoneNumber: String?,
             val type: String,
-            val data: Bundle
+            val data: Bundle,
         ) {
             companion object {
                 fun from(cred: GoogleIdTokenCredential?): Login? {
@@ -136,7 +135,7 @@ object Youtube {
                             idToken = it.idToken,
                             phoneNumber = it.phoneNumber,
                             type = it.type,
-                            data = it.data
+                            data = it.data,
                         )
                     }
                 }
