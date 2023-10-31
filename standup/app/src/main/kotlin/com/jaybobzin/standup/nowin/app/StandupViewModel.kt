@@ -28,10 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 class StandupViewModel @Inject constructor(
     @ApplicationContext applicationContext: Context,
+    val ytManager: Youtube.Manager
 ) : ViewModel() {
-
-    val googleIdToken: MutableState<Youtube.Login?> = mutableStateOf(null)
-    internal val success: MutableState<Int> = mutableIntStateOf(0)
 
     private val mutableYtBinder: MutableStateFlow<SuForegroundServiceBinder?> = MutableStateFlow(null)
     val ytBinder = mutableYtBinder.asStateFlow()
