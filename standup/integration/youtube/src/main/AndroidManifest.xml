@@ -6,7 +6,7 @@
 
     <application>
         <service
-            android:name="com.jaybobzin.standup.integration.youtube.YoutubeService$YtServiceImpl"
+            android:name="com.jaybobzin.standup.integration.youtube.SuForegroundService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false">
         </service>

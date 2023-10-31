@@ -1,7 +1,12 @@
 /* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.nowin.app
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -21,6 +26,9 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption.Builder
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.jaybobzin.standup.integration.youtube.SuForegroundService
+import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
+import com.jaybobzin.standup.integration.youtube.Youtube
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +44,9 @@ class StandupActivity : ComponentActivity() {
 
     private lateinit var credentialManager: CredentialManager
 
-    val ioScope = CoroutineScope(Dispatchers.IO)
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+
+    private var connection : YtConnection? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.tag(TAG).i("onCreate")
@@ -100,6 +110,7 @@ class StandupActivity : ComponentActivity() {
                             GoogleIdTokenCredential.createFrom(credential.data)
                         Timber.tag(TAG).i("Got googleIdToken $googleIdTokenCredential")
                         viewModel.success.value = 1
+                        viewModel.googleIdToken.value = Youtube.Login.from(googleIdTokenCredential)
                     } catch (e: GoogleIdTokenParsingException) {
                         Timber.tag(TAG).e(e, "Received an invalid google id token response")
                         viewModel.success.value = -1
@@ -118,19 +129,34 @@ class StandupActivity : ComponentActivity() {
             }
         }
     }
+    override fun onStart() {
+        super.onStart()
+        val connection = YtConnection(viewModel)
+        this.connection = connection
+        Intent(this, SuForegroundService::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        this.connection?.let {
+            unbindService(it)
+            this.connection = null
+        }
+        viewModel.ytBound(null)
+    }
+
 }
 
 private object ActivityComponent {
-
     @Composable
     fun Content() {
         val viewModel: StandupViewModel = hiltViewModel()
         val countdownVal = viewModel.countdownFlow.collectAsStateWithLifecycle().value
-        val ytBinder = viewModel.ytBinder.collectAsStateWithLifecycle().value
-
+        val googleId = viewModel.googleIdToken.value
         LazyColumn {
             countdownVal?.let {
-                ytBinder?.countdown(it)
                 item {
                     Text(if (it > 0) "$it" else "Stand\nUp!")
                 }
@@ -144,7 +170,24 @@ private object ActivityComponent {
                         },
                     )
                 }
+
+                item {
+                    googleId?.let {
+                        Text(it.toString())
+                    }
+                }
             }
         }
+    }
+}
+
+class YtConnection(private val viewModel : StandupViewModel) : ServiceConnection {
+    override fun onServiceConnected(className: ComponentName, service: IBinder) {
+        // We've bound to LocalService, cast the IBinder and get LocalService instance.
+        viewModel.ytBound(service as SuForegroundServiceBinder)
+    }
+
+    override fun onServiceDisconnected(arg0: ComponentName) {
+        viewModel.ytBound(null)
     }
 }
