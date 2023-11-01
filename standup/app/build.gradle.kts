@@ -46,10 +46,14 @@ android {
     }
 }
 
-configurations {
-    all {
-        exclude( group= "org.apache.httpcomponents", module= "httpclient")
-    }
+//configurations {
+//    all {
+//        exclude( group= "org.apache.httpcomponents", module= "httpclient")
+//    }
+//}
+
+secrets {
+    defaultPropertiesFileName = "secrets.defaults.properties"
 }
 
 dependencies {
