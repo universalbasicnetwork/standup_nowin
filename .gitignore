@@ -1,3 +1,6 @@
+# standup ignores
+*.swp
+
 # built application files
 *.apk
 *.ap_
@@ -16,6 +19,7 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+local.*
 
 # Eclipse project files
 .classpath
