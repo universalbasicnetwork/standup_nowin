@@ -44,15 +44,10 @@ android {
     packaging {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+            excludes.add("META-INF/DEPENDENCIES")
         }
     }
 }
-
-//configurations {
-//    all {
-//        exclude( group= "org.apache.httpcomponents", module= "httpclient")
-//    }
-//}
 
 secrets {
     defaultPropertiesFileName = "secrets.defaults.properties"
@@ -75,4 +70,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
+
+//    implementation(group = "com.google.http-client", name= "google-http-client", version= "1.22.0")
 }

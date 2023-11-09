@@ -27,7 +27,7 @@ interface SuForegroundServiceBinder {
 @AndroidEntryPoint
 class SuForegroundService() : Service() {
 
-    @Inject lateinit var ytManager: Youtube.Manager
+    @Inject lateinit var ytManager: SuYtManager
     private val binder = LocalBinder()
 
     inner class LocalBinder : Binder(), SuForegroundServiceBinder {

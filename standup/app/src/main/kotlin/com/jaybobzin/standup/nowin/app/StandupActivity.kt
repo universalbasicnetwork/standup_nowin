@@ -1,6 +1,7 @@
 /* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.nowin.app
 
+import android.accounts.AccountManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -10,11 +11,21 @@ import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jaybobzin.standup.integration.youtube.SuForegroundService
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
 import com.jaybobzin.standup.nowin.app.StandupComponent.Deps
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+
+
+
 
 private const val TAG = "StandupActivity"
 
@@ -24,6 +35,7 @@ class StandupActivity : ComponentActivity() {
     private val viewModel: StandupViewModel by viewModels()
 
     private var connection: YtConnection? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.tag(TAG).i("onCreate")
@@ -31,6 +43,19 @@ class StandupActivity : ComponentActivity() {
         setContent {
             StandupComponent.Content(Deps(this))
         }
+//        viewModel.ytManager.getGoogleId(this)
+//        viewModel.ytManager.signInWithGoogle(this)
+        viewModel.ytManager.authorize()
+
+
+        viewModel.mutableActivityFlow.value = this
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.mutableActivityFlow.value = null
     }
 
     override fun onStart() {

@@ -5,9 +5,11 @@
 package com.jaybobzin.standup.nowin.app
 
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jaybobzin.standup.data.auth.AuthDataViewModel
@@ -54,6 +56,49 @@ internal object StandupComponent {
                         Text(it.toString())
                     }
                 }
+            }
+        }
+    }
+    @Composable
+    fun YtContent() {
+        val viewModel: StandupViewModel = hiltViewModel()
+        val countdownVal = viewModel.countdownFlow.collectAsStateWithLifecycle().value
+        val googleLogin = viewModel.ytManager.googleLogin.collectAsStateWithLifecycle().value
+        LaunchedEffect(key1 = googleLogin) {
+            viewModel.ytManager.fetchData()
+        }
+
+        val accounts = viewModel.accountsFlow.collectAsStateWithLifecycle().value
+
+        val playlistList = viewModel.ytManager.playlistList.collectAsStateWithLifecycle().value
+        LazyColumn {
+            if (googleLogin == null) {
+                countdownVal?.let {
+                    item {
+                        Text(if (it > 0) "$it" else "Stand\nUp!")
+                    }
+                }
+            } else {
+                item {
+                    Text("Stand up ${googleLogin.displayName}!")
+                }
+            }
+            if (playlistList == null) {
+                item { Text("Loading playlists, showing accounts:") }
+                accounts?.let {
+                    items(items = accounts, key = { it.name}) {
+                        Text("${it.type}: ${it.name}")
+                    }
+                }
+
+            } else {
+                items(items = playlistList, key = {it.id}) {playlist ->
+                    Text("${playlist.id} : ${playlist.kind} : ${playlist.snippet} \n ${playlist.toString()}" )
+                }
+            }
+
+            item {
+                Text("========\nLogin details: $googleLogin")
             }
         }
     }
