@@ -32,27 +32,33 @@ initscript {
 
 rootProject {
     subprojects {
+
+        if (project.path.startsWith(":standup") && (!project.subprojects.isEmpty() 
+	        || project.path in setOf(":standup:integration:openid"))) {
+	    // println("skipping project: ${project.path}")
+            return@subprojects
+	} 
         apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
         // only check changes from _main
         extensions.configure<com.diffplug.gradle.spotless.SpotlessExtension> {
             ratchetFrom("origin/su/_main")
             kotlin {
                 target("**/*.kt")
-                targetExclude("**/build/**/*.kt")
+                targetExclude("**/build/**/*.kt", "integration/openid/**/*.kt")
                 ktlint(ktlintVersion).userData(mapOf("android" to "true"))
                 licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
             }
             format("kts") {
                 target("**/*.kts")
-                targetExclude("**/build/**/*.kts")
+                targetExclude("**/build/**/*.kts", "integration/openid/**/*.kts")
                 // Look for the first line that doesn't have a block comment (assumed to be the license)
                 licenseHeaderFile(rootProject.file("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
             }
             format("xml") {
                 target("**/*.xml")
-                targetExclude("**/build/**/*.xml")
+                targetExclude("**/build/**/*.xml", "**/openid/**/*.xml")
                 // Look for the first XML tag that isn't a comment (<!--) or the xml declaration (<?xml)
-                licenseHeaderFile(rootProject.file("spotless/copyright.xml"), "(<[^!?])")
+                licenseHeaderFile(rootProject.file("spotless/copyright.xml"), "(<[^!?])") 
             }
         }
     }

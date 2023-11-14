@@ -37,7 +37,7 @@ class StandupActivity : ComponentActivity() {
             ActivityComponent.Content()
         }
 //        viewModel.ytManager.loginGoogle(this, BuildConfig.google_server_client_id)
-        Intent(this, LoginActivity::class.java).also { intent -> startActivity(intent)}
+        Intent(this, LoginActivity::class.java).also { intent -> startActivity(intent) }
     }
 
     override fun onStart() {
