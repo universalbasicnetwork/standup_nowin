@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jaybobzin.standup.integration.youtube.SuForegroundService
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
 import dagger.hilt.android.AndroidEntryPoint
+import net.openid.appauthdemo.LoginActivity
 import timber.log.Timber
 
 private const val TAG = "StandupActivity"
@@ -35,7 +36,8 @@ class StandupActivity : ComponentActivity() {
         setContent {
             ActivityComponent.Content()
         }
-        viewModel.ytManager.loginGoogle(this, BuildConfig.google_server_client_id)
+//        viewModel.ytManager.loginGoogle(this, BuildConfig.google_server_client_id)
+        Intent(this, LoginActivity::class.java).also { intent -> startActivity(intent)}
     }
 
     override fun onStart() {

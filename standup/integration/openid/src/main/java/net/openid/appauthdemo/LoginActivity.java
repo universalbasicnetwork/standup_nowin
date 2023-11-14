@@ -122,7 +122,7 @@ public final class LoginActivity extends AppCompatActivity {
                 mExecutor.submit(this::initializeAppAuth));
         findViewById(R.id.start_auth).setOnClickListener((View view) -> startAuth());
 
-        ((EditText)findViewById(R.id.login_hint_value)).addTextChangedListener(
+        ((EditText)findViewById(net.openid.appauthdemo.R.id.login_hint_value)).addTextChangedListener(
                 new LoginHintChangeHandler());
 
         if (!mConfiguration.isValid()) {

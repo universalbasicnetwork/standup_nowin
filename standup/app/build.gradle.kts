@@ -18,6 +18,8 @@ android {
         versionCode = 1
         versionName = "0.0.1"
 
+        manifestPlaceholders[ "appAuthRedirectScheme"] = "com.googleusercontent.apps.748057129388-hu4bn24jdgggdubqpf2959f8lceeei8n"
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -59,6 +61,7 @@ secrets {
 dependencies {
     // TODO
     implementation(projects.standup.integration.youtube)
+    implementation(projects.standup.integration.openid)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.foundation)
