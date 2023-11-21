@@ -28,8 +28,12 @@ import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 
+import com.jaybobzin.standup.data.auth.AuthDataManager;
+import com.jaybobzin.standup.data.auth.AuthDataTokens;
+import com.jaybobzin.standup.data.auth.AuthDataViewModel;
 import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationException;
@@ -63,11 +67,11 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class TokenActivity extends AppCompatActivity {
     private static final String TAG = "TokenActivity";
-
     private static final String KEY_USER_INFO = "userInfo";
 
     private static final int END_SESSION_REQUEST_CODE = 911;
 
+    private AuthDataViewModel authDataViewModel;
     private AuthorizationService mAuthService;
     private AuthStateManager mStateManager;
     private final AtomicReference<JSONObject> mUserInfoJson = new AtomicReference<>();
@@ -77,6 +81,8 @@ public class TokenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        authDataViewModel = new ViewModelProvider(this).get(AuthDataViewModel.class);
 
         mStateManager = AuthStateManager.getInstance(this);
         mExecutor = Executors.newSingleThreadExecutor();
@@ -203,6 +209,10 @@ public class TokenActivity extends AppCompatActivity {
         if (state.getAccessToken() == null) {
             accessTokenInfoView.setText(R.string.no_access_token_returned);
         } else {
+            authDataViewModel.getAuthDataManager().tokensLoaded(AuthDataTokens.Companion.from(
+                    state.getIdToken(), state.getRefreshToken(), state.getAccessToken(),
+                    state.getAccessTokenExpirationTime()
+            ));
             Long expiresAt = state.getAccessTokenExpirationTime();
             if (expiresAt == null) {
                 accessTokenInfoView.setText(R.string.no_access_token_expiry);

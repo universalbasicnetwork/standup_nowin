@@ -12,6 +12,9 @@ android {
 }
 
 dependencies {
+
+    implementation(projects.standup.data.auth)
+
     api("net.openid:appauth:0.11.1")
     implementation ("androidx.appcompat:appcompat:1.3.0")
     implementation ("androidx.annotation:annotation:1.2.0")
