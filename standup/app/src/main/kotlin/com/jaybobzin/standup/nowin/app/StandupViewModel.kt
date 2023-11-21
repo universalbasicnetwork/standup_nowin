@@ -2,6 +2,7 @@
 package com.jaybobzin.standup.nowin.app
 
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import net.openid.appauthdemo.LoginActivity
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,4 +41,7 @@ class StandupViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
     )
+    fun loginGoogle(activity: StandupActivity) {
+        Intent(activity, LoginActivity::class.java).also { intent -> activity.startActivity(intent) }
+    }
 }

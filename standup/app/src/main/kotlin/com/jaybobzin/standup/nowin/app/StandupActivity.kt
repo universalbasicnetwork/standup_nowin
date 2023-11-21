@@ -10,15 +10,10 @@ import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jaybobzin.standup.integration.youtube.SuForegroundService
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
+import com.jaybobzin.standup.nowin.app.StandupComponent.Deps
 import dagger.hilt.android.AndroidEntryPoint
-import net.openid.appauthdemo.LoginActivity
 import timber.log.Timber
 
 private const val TAG = "StandupActivity"
@@ -34,18 +29,18 @@ class StandupActivity : ComponentActivity() {
         Timber.tag(TAG).i("onCreate")
 
         setContent {
-            ActivityComponent.Content()
+            StandupComponent.Content(Deps(this))
         }
+
 //        viewModel.ytManager.loginGoogle(this, BuildConfig.google_server_client_id)
-        Intent(this, LoginActivity::class.java).also { intent -> startActivity(intent) }
     }
 
     override fun onStart() {
         super.onStart()
-        val connection = YtConnection(viewModel)
-        this.connection = connection
-        Intent(this, SuForegroundService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        this.connection = YtConnection(viewModel).also { connection ->
+            Intent(this, SuForegroundService::class.java).also { intent ->
+                bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            }
         }
     }
 
@@ -56,38 +51,6 @@ class StandupActivity : ComponentActivity() {
             this.connection = null
         }
         viewModel.ytBound(null)
-    }
-}
-
-private object ActivityComponent {
-    @Composable
-    fun Content() {
-        val viewModel: StandupViewModel = hiltViewModel()
-        val countdownVal = viewModel.countdownFlow.collectAsStateWithLifecycle().value
-        val googleId = viewModel.ytManager.googleIdToken.value
-        LazyColumn {
-            countdownVal?.let {
-                item {
-                    Text(if (it > 0) "$it" else "Stand\nUp!")
-                }
-                item {
-                    Text(
-                        when (viewModel.ytManager.success.value) {
-                            0 -> "Loading"
-                            1 -> "Success"
-                            -1 -> "Failure"
-                            else -> "huh? ${viewModel.ytManager.success.value}"
-                        },
-                    )
-                }
-
-                item {
-                    googleId?.let {
-                        Text(it.toString())
-                    }
-                }
-            }
-        }
     }
 }
 

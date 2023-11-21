@@ -16,8 +16,7 @@ import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 private const val TAG = "AuthDataUtil"
-class AuthDataUtil {
-}
+class AuthDataUtil
 internal fun <T> SharedPreferences.observeKey(
     key: String,
     getter: (SharedPreferences, String) -> T?

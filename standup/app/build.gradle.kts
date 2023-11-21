@@ -62,6 +62,7 @@ dependencies {
     // TODO
     implementation(projects.standup.integration.youtube)
     implementation(projects.standup.integration.openid)
+    implementation(projects.standup.data.auth)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.foundation)
