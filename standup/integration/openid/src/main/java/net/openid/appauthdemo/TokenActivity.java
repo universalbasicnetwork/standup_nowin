@@ -86,11 +86,6 @@ public class TokenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         authDataViewModel = new ViewModelProvider(this).get(AuthDataViewModel.class);
-        authDataViewModel.getTokensLd().observe(this, authDataTokens -> {
-            if (authDataTokens != null && !authDataTokens.isExpired()) {
-                finish();
-            }
-        });
 
         mStateManager = AuthStateManager.getInstance(this);
         mExecutor = Executors.newSingleThreadExecutor();
@@ -123,6 +118,28 @@ public class TokenActivity extends AppCompatActivity {
                 Log.e(TAG, "Failed to parse saved user info JSON, discarding", ex);
             }
         }
+
+        Button finishView = findViewById(R.id.finish);
+        finishView.setText("Save");
+        finishView.setOnClickListener((View view) -> {
+            AuthState state = mStateManager.getCurrent();
+            authDataViewModel.getAuthDataManager().tokensLoaded(
+                    AuthDataTokens.Companion.from(
+                            state.getIdToken(), state.getRefreshToken(),
+                            state.getAccessToken(),
+                            state.getAccessTokenExpirationTime(), state.getScopeSet()
+                    ));
+        });
+
+        authDataViewModel.getTokensLd().observe(this, authDataTokens -> {
+            boolean saved = authDataTokens != null && !authDataTokens.isExpired();
+            if (saved) {
+                finishView.setText("Finish");
+                finishView.setOnClickListener((View view) -> {
+                    finish();
+                });
+            }
+        });
     }
 
     @Override
@@ -217,10 +234,6 @@ public class TokenActivity extends AppCompatActivity {
         if (state.getAccessToken() == null) {
             accessTokenInfoView.setText(R.string.no_access_token_returned);
         } else {
-            authDataViewModel.getAuthDataManager().tokensLoaded(AuthDataTokens.Companion.from(
-                    state.getIdToken(), state.getRefreshToken(), state.getAccessToken(),
-                    state.getAccessTokenExpirationTime()
-            ));
             Long expiresAt = state.getAccessTokenExpirationTime();
             if (expiresAt == null) {
                 accessTokenInfoView.setText(R.string.no_access_token_expiry);
@@ -421,6 +434,7 @@ public class TokenActivity extends AppCompatActivity {
 
     @MainThread
     private void endSession() {
+        authDataViewModel.getAuthDataManager().signOut();
         AuthState currentState = mStateManager.getCurrent();
         AuthorizationServiceConfiguration config =
                 currentState.getAuthorizationServiceConfiguration();

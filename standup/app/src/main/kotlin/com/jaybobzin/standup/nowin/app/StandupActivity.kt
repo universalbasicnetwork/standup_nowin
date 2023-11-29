@@ -45,17 +45,17 @@ class StandupActivity : ComponentActivity() {
         }
 //        viewModel.ytManager.getGoogleId(this)
 //        viewModel.ytManager.signInWithGoogle(this)
-        viewModel.ytManager.authorize()
+//        viewModel.ytManager.authorize()
 
 
-        viewModel.mutableActivityFlow.value = this
+//        viewModel.mutableActivityFlow.value = this
 
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.mutableActivityFlow.value = null
+//        viewModel.mutableActivityFlow.value = null
     }
 
     override fun onStart() {

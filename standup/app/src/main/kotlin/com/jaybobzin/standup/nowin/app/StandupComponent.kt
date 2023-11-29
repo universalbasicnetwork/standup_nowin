@@ -22,9 +22,13 @@ internal object StandupComponent {
         val viewModel: StandupViewModel = hiltViewModel()
         val authViewModel: AuthDataViewModel = hiltViewModel()
         val countdownVal = viewModel.countdownFlow.collectAsStateWithLifecycle().value
-        val googleId = viewModel.ytManager.googleIdToken.value
 
         val tokens = authViewModel.tokensFlow.collectAsStateWithLifecycle().value
+
+        LaunchedEffect(key1 = tokens) {
+            viewModel.ytManager.fetchData()
+        }
+        val playlistList = viewModel.ytManager.playlistList.collectAsStateWithLifecycle().value
 
         LazyColumn {
             countdownVal?.let {
@@ -32,7 +36,7 @@ internal object StandupComponent {
                     Text(if (it > 0) "$it" else "Stand\nUp!")
                 }
                 item {
-                    if (tokens == null || tokens.isExpired()) {
+                    if (tokens == null || tokens.isExpired() || playlistList == null) {
                         Button({viewModel.loginGoogle(deps.activity)}) {
                             Text("Login Google")
                         }
@@ -40,65 +44,14 @@ internal object StandupComponent {
                         Text("Found tokens")
                     }
                 }
-                item {
-                    Text(
-                        when (viewModel.ytManager.success.value) {
-                            0 -> "Loading"
-                            1 -> "Success"
-                            -1 -> "Failure"
-                            else -> "huh? ${viewModel.ytManager.success.value}"
-                        },
-                    )
-                }
-
-                item {
-                    googleId?.let {
-                        Text(it.toString())
+                if (playlistList == null) {
+                    item { Text("Loading playlists") }
+                    item { Text(text = "$tokens")}
+                } else {
+                    items(items = playlistList, key = {it.id}) {playlist ->
+                        Text("${playlist.id} : ${playlist.kind} : ${playlist.snippet} \n ${playlist.toString()}" )
                     }
                 }
-            }
-        }
-    }
-    @Composable
-    fun YtContent() {
-        val viewModel: StandupViewModel = hiltViewModel()
-        val countdownVal = viewModel.countdownFlow.collectAsStateWithLifecycle().value
-        val googleLogin = viewModel.ytManager.googleLogin.collectAsStateWithLifecycle().value
-        LaunchedEffect(key1 = googleLogin) {
-            viewModel.ytManager.fetchData()
-        }
-
-        val accounts = viewModel.accountsFlow.collectAsStateWithLifecycle().value
-
-        val playlistList = viewModel.ytManager.playlistList.collectAsStateWithLifecycle().value
-        LazyColumn {
-            if (googleLogin == null) {
-                countdownVal?.let {
-                    item {
-                        Text(if (it > 0) "$it" else "Stand\nUp!")
-                    }
-                }
-            } else {
-                item {
-                    Text("Stand up ${googleLogin.displayName}!")
-                }
-            }
-            if (playlistList == null) {
-                item { Text("Loading playlists, showing accounts:") }
-                accounts?.let {
-                    items(items = accounts, key = { it.name}) {
-                        Text("${it.type}: ${it.name}")
-                    }
-                }
-
-            } else {
-                items(items = playlistList, key = {it.id}) {playlist ->
-                    Text("${playlist.id} : ${playlist.kind} : ${playlist.snippet} \n ${playlist.toString()}" )
-                }
-            }
-
-            item {
-                Text("========\nLogin details: $googleLogin")
             }
         }
     }

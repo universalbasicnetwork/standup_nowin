@@ -20,6 +20,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -87,6 +88,7 @@ public final class Configuration {
 
         try {
             readConfiguration();
+            Log.i("su#JBB", "Read configuration");
         } catch (InvalidConfigurationException ex) {
             mConfigError = ex.getMessage();
         }
@@ -204,6 +206,7 @@ public final class Configuration {
         mConfigHash = configData.sha256().base64();
         mClientId = getConfigString("client_id");
         mScope = getRequiredConfigString("authorization_scope");
+        Log.i("su#JBB", "mScope: " + mScope);
         mRedirectUri = getRequiredConfigUri("redirect_uri");
         mEndSessionRedirectUri = getRequiredConfigUri("end_session_redirect_uri");
 

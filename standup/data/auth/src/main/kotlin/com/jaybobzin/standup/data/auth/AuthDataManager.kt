@@ -37,14 +37,18 @@ class AuthDataManager @Inject constructor(@ApplicationContext context: Context) 
         sharedPreferences.storeObject(AUTH_TOKENS_KEY, tokens, AuthDataTokens.serializer(), json)
     }
 
+    fun signOut() {
+        sharedPreferences.edit().clear().apply()
+    }
 }
 
 @Serializable
-data class AuthDataTokens (
+data class AuthDataTokens(
     val idToken: String?,
     val refreshToken: String?,
     val accessToken: String?,
     val accessTokenExpirationTime: Long?,
+    val scopeSet: Set<String>?,
 ) {
     // Replace for testing
     internal var currentTimeFn: () -> Long = System::currentTimeMillis
@@ -57,13 +61,16 @@ data class AuthDataTokens (
             idToken: String?,
             refreshToken: String?,
             accessToken: String?,
-            accessTokenExpirationTime: Long?): AuthDataTokens {
+            accessTokenExpirationTime: Long?,
+            scopeSet: Set<String>?
+        ): AuthDataTokens {
 
             return AuthDataTokens(
                 idToken,
                 refreshToken,
                 accessToken,
-                accessTokenExpirationTime)
+                accessTokenExpirationTime,
+                scopeSet)
 
         }
     }

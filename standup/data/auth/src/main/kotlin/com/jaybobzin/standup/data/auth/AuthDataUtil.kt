@@ -5,10 +5,18 @@
 package com.jaybobzin.standup.data.auth
 
 import android.content.SharedPreferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
@@ -33,6 +41,8 @@ internal fun <T> SharedPreferences.observeKey(
 
     registerOnSharedPreferenceChangeListener(listener)
 
+    //Sent existing value
+    trySend(getter(this@observeKey, key))
     awaitClose { unregisterOnSharedPreferenceChangeListener(listener) }
 }
 internal fun SharedPreferences.observeString(key: String): Flow<String?> = observeKey(key) { sp, k ->
@@ -48,11 +58,11 @@ internal fun <T> SharedPreferences.observeLatestObject(
     key: String,
     deserializer: DeserializationStrategy<T>,
     json: Json = Json
-) : Flow<T?> = observeString(key).mapLatest {
+) : SharedFlow<T?> = observeString(key).mapLatest {
     it?.let { s ->
         json.decodeFromString(deserializer, s)
     }
-}
+}.shareInDefaults()
 
 internal fun <T> SharedPreferences.storeObject(
     key: String,
@@ -65,3 +75,14 @@ internal fun <T> SharedPreferences.storeObject(
     editor.putString(key, tokensJson)
     editor.apply()
 }
+
+fun <T> Flow<T>.shareInDefaults(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    started: SharingStarted = SharingStarted.WhileSubscribed(),
+    replay: Int = 1
+): SharedFlow<T> = this.shareIn( scope = scope, started = started, replay = replay)
+fun <T> Flow<T?>.stateInDefaults(
+    scope: CoroutineScope,
+    started: SharingStarted = SharingStarted.WhileSubscribed(),
+    initialValue: T? = null
+): StateFlow<T?> = this.stateIn( scope = scope, started = started, initialValue = initialValue )

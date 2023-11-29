@@ -33,6 +33,7 @@ import com.google.api.services.youtube.YouTubeRequest
 import com.google.api.services.youtube.YouTubeRequestInitializer
 import com.google.api.services.youtube.YouTubeScopes
 import com.google.api.services.youtube.model.Playlist
+import com.jaybobzin.standup.data.auth.AuthDataManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,10 +50,12 @@ import javax.inject.Inject
 private const val TAG = "SuYtManager"
 class SuYtManager @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
-    private val config: Config) {
+    private val config: Config,
+    private val authDataManager: AuthDataManager
+    ) {
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    private val ytScopes = listOf(YouTubeScopes.YOUTUBE_READONLY)
+//    private val ytScopes = listOf(YouTubeScopes.YOUTUBE_READONLY)
 
     interface Config {
         val serverClientId: String
@@ -70,18 +73,14 @@ class SuYtManager @Inject constructor(
     private val transport : HttpTransport = NetHttpTransport()
     private val jsonFactory: JsonFactory = GsonFactory()
 
-    private val yt : SharedFlow<YouTube?> = googleLogin.mapLatest {login ->
-        return@mapLatest if (login == null) null else {
-            val cred: GoogleIdTokenCredential = login.credential
-//            val credential = GoogleCredential().setAccessToken(cred.idToken)
-//            GoogleAuthUtil
-            val requestInitializer = GoogleAccountCredential
-                .usingOAuth2(applicationContext, ytScopes)
-                .setSelectedAccountName(cred.id)
-                .setBackOff(ExponentialBackOff())
-//            GoogleAuthUtil
+    private val yt : SharedFlow<YouTube?> = authDataManager.tokensFlow.mapLatest { tokens ->
+        return@mapLatest if (tokens == null) null else {
+            val credential = GoogleCredential()
+                .setAccessToken(tokens.accessToken)
+//                .setExpirationTimeMilliseconds(tokens.accessTokenExpirationTime)
+//                .setRefreshToken(tokens.refreshToken)
             val youtubeRequestInitializer = YouTubeRequestInitializer(config.apiKey)//CredentialedRequestInitializer(login)
-            YouTube.Builder(transport, jsonFactory, requestInitializer)
+            YouTube.Builder(transport, jsonFactory, credential)
                 .setApplicationName(config.appName)
                 .setYouTubeRequestInitializer(youtubeRequestInitializer)
                 .build()
@@ -234,17 +233,13 @@ class SuYtManager @Inject constructor(
         }
 
     }
-
-    fun authorize() {
-
-    }
 }
 
-class CredentialedRequestInitializer(val login: GoogleLogin) : YouTubeRequestInitializer(null) {
-    override fun initializeYouTubeRequest(request: YouTubeRequest<*>?) {
-        request?.put("Authorization", "Bearer " + login.credential.idToken)
-    }
-}
+//class CredentialedRequestInitializer(val login: GoogleLogin) : YouTubeRequestInitializer(null) {
+//    override fun initializeYouTubeRequest(request: YouTubeRequest<*>?) {
+//        request?.put("Authorization", "Bearer " + login.credential.idToken)
+//    }
+//}
 
 data class GoogleLogin(
     val id: String,

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jaybobzin.standup.data.auth.stateInDefaults
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
 import com.jaybobzin.standup.integration.youtube.SuYtManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,15 +38,15 @@ class StandupViewModel @Inject constructor(
         mutableYtBinder.value = binder
     }
 
-    val mutableActivityFlow: MutableStateFlow<StandupActivity?> = MutableStateFlow(null)
+//    val mutableActivityFlow: MutableStateFlow<StandupActivity?> = MutableStateFlow(null)
 
-    val accountsFlow : StateFlow<List<Account>?> = mutableActivityFlow.map {
-        if (it == null) null else {
-//            val am = AccountManager.get(it)
-//            am.accounts.toList()
-            listOf<Account>()
-        }
-    }.stateInDefaults( scope = viewModelScope )
+//    val accountsFlow : StateFlow<List<Account>?> = mutableActivityFlow.map {
+//        if (it == null) null else {
+////            val am = AccountManager.get(it)
+////            am.accounts.toList()
+//            listOf<Account>()
+//        }
+//    }.stateInDefaults( scope = viewModelScope )
 
     val countdownFlow: StateFlow<Int?> = ytBinder.flatMapLatest {
         it?.countdownFlow ?: flowOf(null)
@@ -57,8 +58,3 @@ class StandupViewModel @Inject constructor(
     }
 }
 
-fun <T> Flow<T?>.stateInDefaults(
-    scope: CoroutineScope,
-    started: SharingStarted = SharingStarted.WhileSubscribed(),
-    initialValue: T? = null
-): StateFlow<T?> = this.stateIn( scope = scope, started = started, initialValue = initialValue )
