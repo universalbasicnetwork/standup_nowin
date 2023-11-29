@@ -215,7 +215,9 @@ class SuYtManager @Inject constructor(
                     "status",
                 )
                 val list = try {
-                    yt.playlists().list(parts).execute()
+                    yt.playlists().list(parts)
+                        .set("mine", true)
+                        .execute()
                 } catch (e: GoogleJsonResponseException) {
                     Timber.tag(TAG).w(e, "Request failed")
                     null
