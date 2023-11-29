@@ -29,11 +29,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.jaybobzin.standup.data.auth.AuthDataManager;
 import com.jaybobzin.standup.data.auth.AuthDataTokens;
 import com.jaybobzin.standup.data.auth.AuthDataViewModel;
+import dagger.hilt.android.AndroidEntryPoint;
 import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationException;
@@ -65,6 +67,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * additional post-authorization operations if available, such as fetching user info and refreshing
  * access tokens.
  */
+@AndroidEntryPoint
 public class TokenActivity extends AppCompatActivity {
     private static final String TAG = "TokenActivity";
     private static final String KEY_USER_INFO = "userInfo";
@@ -258,7 +261,7 @@ public class TokenActivity extends AppCompatActivity {
                 ((TextView) findViewById(R.id.userinfo_name)).setText(name);
 
                 if (userInfo.has("picture")) {
-                    GlideApp.with(TokenActivity.this)
+                    Glide.with(TokenActivity.this)
                             .load(Uri.parse(userInfo.getString("picture")))
                             .fitCenter()
                             .into((ImageView) findViewById(R.id.userinfo_profile));

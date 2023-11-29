@@ -19,6 +19,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import timber.log.Timber
+import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val TAG = "AuthDataManager"
@@ -27,7 +28,7 @@ private const val AUTH_PREFS_FILENAME = "data.auth"
 private const val AUTH_TOKENS_KEY = "tokens"
 
 @Singleton
-class AuthDataManager(@ApplicationContext context: Context) {
+class AuthDataManager @Inject constructor(@ApplicationContext context: Context) {
     private val masterKeyAlias: String = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 
     private val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
