@@ -9,16 +9,8 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.isActive
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -54,6 +46,12 @@ data class AuthDataTokens (
     val accessToken: String?,
     val accessTokenExpirationTime: Long?,
 ) {
+    // Replace for testing
+    internal var currentTimeFn: () -> Long = System::currentTimeMillis
+    fun isExpired(): Boolean {
+        return accessTokenExpirationTime != null && accessTokenExpirationTime <= currentTimeFn()
+    }
+
     companion object {
         fun from(
             idToken: String?,

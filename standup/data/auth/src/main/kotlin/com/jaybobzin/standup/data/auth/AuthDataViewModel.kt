@@ -6,6 +6,7 @@ package com.jaybobzin.standup.data.auth
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,4 +23,6 @@ class AuthDataViewModel @Inject constructor(val authDataManager: AuthDataManager
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed()
     )
+
+    val tokensLd = authDataManager.tokensFlow.asLiveData(viewModelScope.coroutineContext)
 }

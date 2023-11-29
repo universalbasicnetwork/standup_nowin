@@ -31,8 +31,6 @@ class StandupActivity : ComponentActivity() {
         setContent {
             StandupComponent.Content(Deps(this))
         }
-
-//        viewModel.ytManager.loginGoogle(this, BuildConfig.google_server_client_id)
     }
 
     override fun onStart() {

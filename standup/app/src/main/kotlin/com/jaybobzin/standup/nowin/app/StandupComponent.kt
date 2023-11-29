@@ -30,12 +30,12 @@ internal object StandupComponent {
                     Text(if (it > 0) "$it" else "Stand\nUp!")
                 }
                 item {
-                    if (tokens == null) {
+                    if (tokens == null || tokens.isExpired()) {
                         Button({viewModel.loginGoogle(deps.activity)}) {
                             Text("Login Google")
                         }
                     } else {
-                        Text("Tokens: $tokens")
+                        Text("Found tokens")
                     }
                 }
                 item {

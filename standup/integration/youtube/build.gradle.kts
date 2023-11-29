@@ -14,6 +14,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.standup.data.auth)
+
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.credentials.credentials)
     implementation(libs.androidx.credentials.play.services.auth)

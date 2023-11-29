@@ -86,6 +86,11 @@ public class TokenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         authDataViewModel = new ViewModelProvider(this).get(AuthDataViewModel.class);
+        authDataViewModel.getTokensLd().observe(this, authDataTokens -> {
+            if (authDataTokens != null && !authDataTokens.isExpired()) {
+                finish();
+            }
+        });
 
         mStateManager = AuthStateManager.getInstance(this);
         mExecutor = Executors.newSingleThreadExecutor();
