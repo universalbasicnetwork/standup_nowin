@@ -1,7 +1,4 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
-
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.data.auth
 
 import android.content.Context
@@ -28,7 +25,7 @@ class AuthDataManager @Inject constructor(@ApplicationContext context: Context) 
         masterKeyAlias,
         context,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
     )
 
     private val json: Json = Json
@@ -62,18 +59,15 @@ data class AuthDataTokens(
             refreshToken: String?,
             accessToken: String?,
             accessTokenExpirationTime: Long?,
-            scopeSet: Set<String>?
+            scopeSet: Set<String>?,
         ): AuthDataTokens {
-
             return AuthDataTokens(
                 idToken,
                 refreshToken,
                 accessToken,
                 accessTokenExpirationTime,
-                scopeSet)
-
+                scopeSet,
+            )
         }
     }
 }
-
-

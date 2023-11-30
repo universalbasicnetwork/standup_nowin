@@ -38,7 +38,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideYtSecrets() : SuYtManager.Config {
+    fun provideYtSecrets(): SuYtManager.Config {
         return object : Config {
             override val serverClientId: String = BuildConfig.google_server_client_id
             override val appName: String = BuildConfig.APPLICATION_ID

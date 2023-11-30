@@ -15,23 +15,16 @@ import androidx.credentials.PublicKeyCredential
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
 import com.google.api.client.json.gson.GsonFactory
-import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.youtube.YouTube
-import com.google.api.services.youtube.YouTubeRequest
 import com.google.api.services.youtube.YouTubeRequestInitializer
-import com.google.api.services.youtube.YouTubeScopes
 import com.google.api.services.youtube.model.Playlist
 import com.jaybobzin.standup.data.auth.AuthDataManager
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -51,8 +44,8 @@ private const val TAG = "SuYtManager"
 class SuYtManager @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
     private val config: Config,
-    private val authDataManager: AuthDataManager
-    ) {
+    private val authDataManager: AuthDataManager,
+) {
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
 //    private val ytScopes = listOf(YouTubeScopes.YOUTUBE_READONLY)
@@ -70,23 +63,24 @@ class SuYtManager @Inject constructor(
 
     private val success: MutableState<Int> = mutableIntStateOf(0)
 
-    private val transport : HttpTransport = NetHttpTransport()
+    private val transport: HttpTransport = NetHttpTransport()
     private val jsonFactory: JsonFactory = GsonFactory()
 
-    private val yt : SharedFlow<YouTube?> = authDataManager.tokensFlow.mapLatest { tokens ->
-        return@mapLatest if (tokens == null) null else {
+    private val yt: SharedFlow<YouTube?> = authDataManager.tokensFlow.mapLatest { tokens ->
+        return@mapLatest if (tokens == null) {
+            null
+        } else {
             val credential = GoogleCredential()
                 .setAccessToken(tokens.accessToken)
 //                .setExpirationTimeMilliseconds(tokens.accessTokenExpirationTime)
 //                .setRefreshToken(tokens.refreshToken)
-            val youtubeRequestInitializer = YouTubeRequestInitializer(config.apiKey)//CredentialedRequestInitializer(login)
+            val youtubeRequestInitializer = YouTubeRequestInitializer(config.apiKey) // CredentialedRequestInitializer(login)
             YouTube.Builder(transport, jsonFactory, credential)
                 .setApplicationName(config.appName)
                 .setYouTubeRequestInitializer(youtubeRequestInitializer)
                 .build()
         }
     }.shareIn(ioScope, started = SharingStarted.Eagerly, replay = 1)
-
 
 //    fun signInWithGoogle(
 //        context: Context,
@@ -113,8 +107,8 @@ class SuYtManager @Inject constructor(
 //    }
     fun getGoogleId(
         context: Context,
-        autoLogin: Boolean = true
-        ) {
+        autoLogin: Boolean = true,
+    ) {
         val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(autoLogin)
             .setAutoSelectEnabled(autoLogin)
@@ -135,10 +129,9 @@ class SuYtManager @Inject constructor(
             } catch (e: NoCredentialException) {
                 Timber.tag(TAG).i(e, "Not stored credential ($autoLogin)")
                 if (autoLogin) {
-                    //try again without autologin
+                    // try again without autologin
                     getGoogleId(context, false)
                 }
-
             } catch (e: GetCredentialException) {
                 Timber.tag(TAG).e(e, "Failed to get credential")
                 success.value = -1
@@ -201,7 +194,7 @@ class SuYtManager @Inject constructor(
 
     fun fetchData() {
         ioScope.launch {
-            yt.collectLatest {yt ->
+            yt.collectLatest { yt ->
                 if (yt == null) {
                     Timber.tag(TAG).w("Youtube Client not available")
                     return@collectLatest
@@ -233,15 +226,14 @@ class SuYtManager @Inject constructor(
                 }
             }
         }
-
     }
 }
 
-//class CredentialedRequestInitializer(val login: GoogleLogin) : YouTubeRequestInitializer(null) {
+// class CredentialedRequestInitializer(val login: GoogleLogin) : YouTubeRequestInitializer(null) {
 //    override fun initializeYouTubeRequest(request: YouTubeRequest<*>?) {
 //        request?.put("Authorization", "Bearer " + login.credential.idToken)
 //    }
-//}
+// }
 
 data class GoogleLogin(
     val id: String,
@@ -268,10 +260,9 @@ data class GoogleLogin(
                     phoneNumber = it.phoneNumber,
                     type = it.type,
                     data = it.data,
-                    credential = it
+                    credential = it,
                 )
             }
         }
     }
 }
-

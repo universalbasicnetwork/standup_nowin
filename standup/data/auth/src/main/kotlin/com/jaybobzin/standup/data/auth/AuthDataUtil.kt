@@ -1,14 +1,10 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
-
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.data.auth
 
 import android.content.SharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,7 +23,7 @@ private const val TAG = "AuthDataUtil"
 class AuthDataUtil
 internal fun <T> SharedPreferences.observeKey(
     key: String,
-    getter: (SharedPreferences, String) -> T?
+    getter: (SharedPreferences, String) -> T?,
 ): Flow<T?> = callbackFlow {
     val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, k ->
         if (key != k) {
@@ -41,7 +37,7 @@ internal fun <T> SharedPreferences.observeKey(
 
     registerOnSharedPreferenceChangeListener(listener)
 
-    //Sent existing value
+    // Sent existing value
     trySend(getter(this@observeKey, key))
     awaitClose { unregisterOnSharedPreferenceChangeListener(listener) }
 }
@@ -57,8 +53,8 @@ internal fun SharedPreferences.observeString(key: String): Flow<String?> = obser
 internal fun <T> SharedPreferences.observeLatestObject(
     key: String,
     deserializer: DeserializationStrategy<T>,
-    json: Json = Json
-) : SharedFlow<T?> = observeString(key).mapLatest {
+    json: Json = Json,
+): SharedFlow<T?> = observeString(key).mapLatest {
     it?.let { s ->
         json.decodeFromString(deserializer, s)
     }
@@ -68,7 +64,7 @@ internal fun <T> SharedPreferences.storeObject(
     key: String,
     obj: T,
     serializer: KSerializer<T>,
-    json: Json = Json
+    json: Json = Json,
 ) {
     val tokensJson = json.encodeToString(serializer, obj)
     val editor = edit()
@@ -79,10 +75,10 @@ internal fun <T> SharedPreferences.storeObject(
 fun <T> Flow<T>.shareInDefaults(
     scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     started: SharingStarted = SharingStarted.WhileSubscribed(),
-    replay: Int = 1
-): SharedFlow<T> = this.shareIn( scope = scope, started = started, replay = replay)
+    replay: Int = 1,
+): SharedFlow<T> = this.shareIn(scope = scope, started = started, replay = replay)
 fun <T> Flow<T?>.stateInDefaults(
     scope: CoroutineScope,
     started: SharingStarted = SharingStarted.WhileSubscribed(),
-    initialValue: T? = null
-): StateFlow<T?> = this.stateIn( scope = scope, started = started, initialValue = initialValue )
+    initialValue: T? = null,
+): StateFlow<T?> = this.stateIn(scope = scope, started = started, initialValue = initialValue)

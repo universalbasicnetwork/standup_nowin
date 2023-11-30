@@ -1,7 +1,4 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
-
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.data.auth
 
 import dagger.Module
@@ -16,6 +13,4 @@ object AuthDataModule {
 //    fun authDataManager(@ApplicationContext context: Context) : AuthDataManager = AuthDataManager(
 //        context = context
 //    )
-
 }
-

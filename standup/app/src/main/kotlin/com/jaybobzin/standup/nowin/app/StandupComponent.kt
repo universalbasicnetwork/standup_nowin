@@ -1,7 +1,4 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
-
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.nowin.app
 
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +14,7 @@ import com.jaybobzin.standup.data.auth.AuthDataViewModel
 private const val TAG = "StandupComponent"
 internal object StandupComponent {
     data class Deps(val activity: StandupActivity)
+
     @Composable
     fun Content(deps: Deps) {
         val viewModel: StandupViewModel = hiltViewModel()
@@ -37,7 +35,7 @@ internal object StandupComponent {
                 }
                 item {
                     if (tokens == null || tokens.isExpired() || playlistList == null) {
-                        Button({viewModel.loginGoogle(deps.activity)}) {
+                        Button({ viewModel.loginGoogle(deps.activity) }) {
                             Text("Login Google")
                         }
                     } else {
@@ -46,10 +44,10 @@ internal object StandupComponent {
                 }
                 if (playlistList == null) {
                     item { Text("Loading playlists") }
-                    item { Text(text = "$tokens")}
+                    item { Text(text = "$tokens") }
                 } else {
-                    items(items = playlistList, key = {it.id}) {playlist ->
-                        Text("${playlist.id} : ${playlist.kind} : ${playlist.snippet} \n ${playlist.toString()}" )
+                    items(items = playlistList, key = { it.id }) { playlist ->
+                        Text("${playlist.id} : ${playlist.kind} : ${playlist.snippet} \n $playlist")
                     }
                 }
             }
