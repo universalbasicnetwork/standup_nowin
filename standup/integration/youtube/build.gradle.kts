@@ -22,13 +22,11 @@ configurations {
 
 dependencies {
     implementation(projects.standup.data.auth)
+    implementation(projects.standup.common.compose)
 
-    implementation(libs.androidx.compose.runtime)
     api(libs.androidx.credentials.credentials)
     api(libs.androidx.credentials.play.services.auth)
     api(libs.google.id)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.timber)
 
     api("net.openid:appauth:0.11.1")
     api ("pub.devrel:easypermissions:3.0.0")

@@ -58,18 +58,11 @@ dependencies {
     implementation(projects.standup.integration.youtube)
     implementation(projects.standup.integration.openid)
     implementation(projects.standup.data.auth)
+    implementation(projects.standup.common.compose)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.guava)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.timber)
-
-//    implementation(group = "com.google.http-client", name= "google-http-client", version= "1.22.0")
 }

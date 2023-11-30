@@ -1,5 +1,7 @@
-/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
-package com.jaybobzin.standup.data.auth
+/*
+ * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
+ */
+package com.jaybobzin.standup.common.compose
 
 import android.content.SharedPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -19,9 +21,22 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 
-private const val TAG = "AuthDataUtil"
-class AuthDataUtil
-internal fun <T> SharedPreferences.observeKey(
+private const val TAG = "FlowUtil"
+object FlowUtil
+
+fun <T> Flow<T>.shareInDefaults(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    started: SharingStarted = SharingStarted.WhileSubscribed(),
+    replay: Int = 1,
+): SharedFlow<T> = this.shareIn(scope = scope, started = started, replay = replay)
+
+fun <T> Flow<T?>.stateInDefaults(
+    scope: CoroutineScope,
+    started: SharingStarted = SharingStarted.WhileSubscribed(),
+    initialValue: T? = null,
+): StateFlow<T?> = this.stateIn(scope = scope, started = started, initialValue = initialValue)
+
+fun <T> SharedPreferences.observeKey(
     key: String,
     getter: (SharedPreferences, String) -> T?,
 ): Flow<T?> = callbackFlow {
@@ -41,7 +56,7 @@ internal fun <T> SharedPreferences.observeKey(
     trySend(getter(this@observeKey, key))
     awaitClose { unregisterOnSharedPreferenceChangeListener(listener) }
 }
-internal fun SharedPreferences.observeString(key: String): Flow<String?> = observeKey(key) { sp, k ->
+fun SharedPreferences.observeString(key: String): Flow<String?> = observeKey(key) { sp, k ->
     try {
         sp.getString(k, null)
     } catch (e: ClassCastException) {
@@ -50,7 +65,7 @@ internal fun SharedPreferences.observeString(key: String): Flow<String?> = obser
     }
 }
 
-internal fun <T> SharedPreferences.observeLatestObject(
+fun <T> SharedPreferences.observeLatestObject(
     key: String,
     deserializer: DeserializationStrategy<T>,
     json: Json = Json,
@@ -60,7 +75,7 @@ internal fun <T> SharedPreferences.observeLatestObject(
     }
 }.shareInDefaults()
 
-internal fun <T> SharedPreferences.storeObject(
+fun <T> SharedPreferences.storeObject(
     key: String,
     obj: T,
     serializer: KSerializer<T>,
@@ -72,13 +87,3 @@ internal fun <T> SharedPreferences.storeObject(
     editor.apply()
 }
 
-fun <T> Flow<T>.shareInDefaults(
-    scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-    started: SharingStarted = SharingStarted.WhileSubscribed(),
-    replay: Int = 1,
-): SharedFlow<T> = this.shareIn(scope = scope, started = started, replay = replay)
-fun <T> Flow<T?>.stateInDefaults(
-    scope: CoroutineScope,
-    started: SharingStarted = SharingStarted.WhileSubscribed(),
-    initialValue: T? = null,
-): StateFlow<T?> = this.stateIn(scope = scope, started = started, initialValue = initialValue)

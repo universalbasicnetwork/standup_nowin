@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jaybobzin.standup.data.auth.stateInDefaults
+import com.jaybobzin.standup.common.compose.stateInDefaults
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
 import com.jaybobzin.standup.integration.youtube.SuYtManager
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -40,6 +40,7 @@ include(":standup:app")
 include(":standup:integration:youtube")
 include(":standup:integration:openid")
 include(":standup:data:auth")
+include(":standup:common:compose")
 
 include(":app")
 include(":app-nia-catalog")

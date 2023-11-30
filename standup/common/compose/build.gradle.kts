@@ -8,17 +8,20 @@ plugins {
 }
 
 android {
-    namespace = "com.jaybobzin.standup.data.auth"
+    namespace = "com.jaybobzin.standup.common.compose"
 }
 
 dependencies {
 
-    implementation(projects.standup.common.compose)
+    api(libs.androidx.compose.runtime)
+    api(libs.androidx.lifecycle.viewmodel)
+    api(libs.androidx.lifecycle.runtimeCompose)
+    api(libs.androidx.hilt.navigation.compose)
 
-    implementation("androidx.security:security-crypto:1.0.0")
+    api(libs.kotlinx.coroutines.android)
+    api(libs.kotlinx.serialization.json)
 
-    implementation(libs.androidx.lifecycle.livedata)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
+    api(libs.timber)
 
     testImplementation(projects.core.testing)
 }
