@@ -10,6 +10,9 @@ plugins {
 
 android {
     namespace = "com.jaybobzin.standup.core"
+    unitTestVariants.all {
+        this.mergedFlavor.manifestPlaceholders["appAuthRedirectScheme"] = "com.jaybobzin.standup.nowin.app"
+    }
 }
 
 dependencies {
