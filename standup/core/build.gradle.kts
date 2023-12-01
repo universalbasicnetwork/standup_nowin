@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.nowinandroid.android.library)
     alias(libs.plugins.nowinandroid.android.library.compose)
+//    alias(libs.plugins.nowinandroid.android.room)
     alias(libs.plugins.nowinandroid.android.hilt)
 }
 

@@ -24,5 +24,5 @@ dependencies {
     implementation ("com.squareup.okio:okio:2.10.0")
     implementation ("joda-time:joda-time:2.10.10")
 
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    kapt ("com.github.bumptech.glide:compiler:4.16.0")
 }
