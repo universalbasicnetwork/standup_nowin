@@ -1,6 +1,4 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.common.compose
 
 import android.content.SharedPreferences

@@ -1,6 +1,4 @@
-/*
- * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
- */
+/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 package com.jaybobzin.standup.core
 
 import android.content.ComponentName
@@ -12,9 +10,9 @@ import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import com.jaybobzin.standup.core.StandupComponent.Deps
 import com.jaybobzin.standup.integration.youtube.SuForegroundService
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
-import com.jaybobzin.standup.core.StandupComponent.Deps
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
