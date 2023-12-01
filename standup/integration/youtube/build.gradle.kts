@@ -11,6 +11,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    unitTestVariants.all {
+        this.mergedFlavor.manifestPlaceholders["appAuthRedirectScheme"] = "com.jaybobzin.standup.nowin.app"
+    }
 }
 
 configurations {
