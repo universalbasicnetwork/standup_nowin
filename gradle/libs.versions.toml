@@ -64,6 +64,9 @@ room = "2.5.2"
 secrets = "2.0.1"
 timber = "5.0.1"
 turbine = "0.12.1"
+org-jetbrains-kotlin-android = "1.9.10"
+junit = "1.1.5"
+material = "1.10.0"
 
 [libraries]
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -165,6 +168,8 @@ firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "per
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 work-testing = { group = "androidx.work", name = "work-testing", version = "2.8.1" }
+junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -196,4 +201,5 @@ nowinandroid-android-lint = { id = "nowinandroid.android.lint", version = "unspe
 nowinandroid-android-room = { id = "nowinandroid.android.room", version = "unspecified" }
 nowinandroid-android-test = { id = "nowinandroid.android.test", version = "unspecified" }
 nowinandroid-jvm-library = { id = "nowinandroid.jvm.library", version = "unspecified" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
 

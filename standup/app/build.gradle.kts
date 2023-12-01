@@ -54,7 +54,7 @@ secrets {
 }
 
 dependencies {
-    // TODO
+    implementation(projects.standup.core)
     implementation(projects.standup.integration.youtube)
     implementation(projects.standup.integration.openid)
     implementation(projects.standup.data.auth)
