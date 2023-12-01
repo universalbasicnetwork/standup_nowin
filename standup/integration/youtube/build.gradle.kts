@@ -26,15 +26,14 @@ dependencies {
 
     api(libs.androidx.credentials.credentials)
     api(libs.androidx.credentials.play.services.auth)
+    api(libs.appauth)
+    api(libs.easypermissions)
+    api(libs.google.api.client.android)
+    api(libs.google.api.services.youtube)
+    api(libs.google.http.client)
     api(libs.google.id)
 
-    api("net.openid:appauth:0.11.1")
-    api ("pub.devrel:easypermissions:3.0.0")
-    api("com.google.api-client:google-api-client-android:1.33.0")
-    api("com.google.apis:google-api-services-youtube:v3-rev20231011-2.0.0")
-    api(group = "com.google.http-client", name= "google-http-client", version= "1.22.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-
+    implementation(libs.gson)
 
     testImplementation(projects.core.testing)
 }

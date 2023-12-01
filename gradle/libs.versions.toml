@@ -19,6 +19,7 @@ androidxMacroBenchmark = "1.2.0-alpha16"
 androidxMetrics = "1.0.0-alpha03"
 androidxNavigation = "2.5.3"
 androidxProfileinstaller = "1.3.1"
+androidxSecurity = "1.0.0"
 androidxStartup = "1.1.1"
 androidxTestCore = "1.5.0"
 androidxTestExt = "1.1.4"
@@ -28,14 +29,20 @@ androidxTracing = "1.1.0"
 androidxUiAutomator = "2.2.0"
 androidxWindowManager = "1.0.0"
 androidxWork = "2.9.0-alpha01"
+appauth = "0.11.1"
 coil = "2.2.2"
+easypermissions = "3.0.0"
 firebaseBom = "31.2.0"
 firebaseCrashlyticsPlugin = "2.9.2"
 firebasePerfPlugin = "1.4.2"
 gmsPlugin = "4.3.14"
+google-api-client-android = "1.33.0"
+google-api-services-youtube = "v3-rev20231011-2.0.0"
+google-http-client = "1.22.0"
 googleId = "1.1.0"
 googleOss = "17.0.1"
 googleOssPlugin = "0.10.6"
+gson = "2.10.1"
 hilt = "2.47"
 hiltExt = "1.0.0"
 jacoco = "0.8.7"
@@ -95,6 +102,7 @@ androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", v
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileinstaller" }
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidxSecurity"}
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
@@ -105,18 +113,24 @@ androidx-tracing-ktx = { group = "androidx.tracing", name = "tracing-ktx", versi
 androidx-window-manager = { module = "androidx.window:window", version.ref = "androidxWindowManager" }
 androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
 androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "androidxWork" }
+appauth = {group = "net.openid", name = "appauth", version.ref = "appauth" }
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
+easypermissions = {group = "pub.devrel", name = "easypermissions", version.ref = "easypermissions"}
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-cloud-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 firebase-performance = { group = "com.google.firebase", name = "firebase-perf-ktx" }
 firebase-performance-gradle = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
+google-api-client-android = {group = "com.google.api-client", name = "google-api-client-android", version.ref = "google-api-client-android"}
+google-api-services-youtube = {group = "com.google.apis", name = "google-api-services-youtube", version.ref = "google-api-services-youtube"}
+google-http-client = { group = "com.google.http-client", name= "google-http-client", version.ref = "google-http-client"}
 google-id = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleId" }
 google-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "googleOss" }
 google-oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "googleOssPlugin" }
+gson ={ group=  "com.google.code.gson", name = "gson", version.ref = "gson"}
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }

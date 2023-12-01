@@ -15,7 +15,7 @@ dependencies {
 
     implementation(projects.standup.common.compose)
 
-    implementation("androidx.security:security-crypto:1.0.0")
+    implementation(libs.androidx.security.crypto)
 
     implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.lifecycle.livedata.ktx)
