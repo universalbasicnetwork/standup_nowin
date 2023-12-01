@@ -16,13 +16,13 @@ dependencies {
 
     implementation(projects.standup.data.auth)
 
-    api("net.openid:appauth:0.11.1")
-    implementation ("androidx.appcompat:appcompat:1.3.0")
-    implementation ("androidx.annotation:annotation:1.2.0")
-    implementation ("com.google.android.material:material:1.3.0")
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    implementation ("com.squareup.okio:okio:2.10.0")
-    implementation ("joda-time:joda-time:2.10.10")
+    api(libs.openid.appauth)
+    implementation (libs.androidx.appcompat)
+    implementation (libs.androidx.annotation)
+    implementation (libs.openid.material)
+    implementation (libs.glide)
+    implementation (libs.okio)
+    implementation (libs.joda.time)
 
-    kapt ("com.github.bumptech.glide:compiler:4.16.0")
+    kapt (libs.glide.compiler)
 }

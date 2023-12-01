@@ -29,7 +29,7 @@ dependencies {
 
     api(libs.androidx.credentials.credentials)
     api(libs.androidx.credentials.play.services.auth)
-    api(libs.appauth)
+    api(libs.openid.appauth)
     api(libs.easypermissions)
     api(libs.google.api.client.android)
     api(libs.google.api.services.youtube)
