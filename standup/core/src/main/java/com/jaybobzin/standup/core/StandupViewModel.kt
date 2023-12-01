@@ -1,5 +1,7 @@
-/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
-package com.jaybobzin.standup.nowin.app
+/*
+ * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
+ */
+package com.jaybobzin.standup.core
 
 import android.content.Context
 import android.content.Intent

@@ -1,5 +1,7 @@
-/* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
-package com.jaybobzin.standup.nowin.app
+/*
+ * Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0
+ */
+package com.jaybobzin.standup.core
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
