@@ -26,4 +26,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.guava)
+
+    testImplementation(projects.core.testing)
 }

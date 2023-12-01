@@ -56,4 +56,6 @@ dependencies {
     implementation(projects.standup.core)
     implementation(projects.standup.integration.youtube)
     implementation(projects.standup.common.compose)
+
+    testImplementation(projects.core.testing)
 }
