@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.nowinandroid.android.application.compose)
     alias(libs.plugins.nowinandroid.android.application.flavors)
     alias(libs.plugins.nowinandroid.android.hilt)
-//    alias(libs.plugins.nowinandroid.android.room)
     alias(libs.plugins.secrets)
 }
 
@@ -17,6 +16,8 @@ android {
         applicationId = "com.jaybobzin.standup.nowin.app"
         versionCode = 1
         versionName = "0.0.1"
+
+        manifestPlaceholders[ "appAuthRedirectScheme"] = "com.googleusercontent.apps.748057129388-hu4bn24jdgggdubqpf2959f8lceeei8n"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -42,33 +43,19 @@ android {
     packaging {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+            excludes.add("META-INF/DEPENDENCIES")
         }
     }
 }
-
-//configurations {
-//    all {
-//        exclude( group= "org.apache.httpcomponents", module= "httpclient")
-//    }
-//}
 
 secrets {
     defaultPropertiesFileName = "secrets.defaults.properties"
 }
 
 dependencies {
-    // TODO
+    implementation(projects.standup.core)
     implementation(projects.standup.integration.youtube)
+    implementation(projects.standup.common.compose)
 
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.lifecycle.runtimeCompose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.kotlinx.coroutines.guava)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.timber)
+    testImplementation(projects.core.testing)
 }

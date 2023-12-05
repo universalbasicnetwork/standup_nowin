@@ -12,16 +12,6 @@
         android:label="@string/su_app_name"
         android:supportsRtl="true"
         >
-
-        <activity
-            android:name=".StandupActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
     </application>
 
 </manifest>

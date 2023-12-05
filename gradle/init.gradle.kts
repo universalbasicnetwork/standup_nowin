@@ -32,6 +32,12 @@ initscript {
 
 rootProject {
     subprojects {
+
+        if (project.path.startsWith(":standup") && (!project.subprojects.isEmpty() 
+	        || project.path in setOf(":standup:integration:openid"))) {
+	    // println("skipping project: ${project.path}")
+            return@subprojects
+	} 
         apply<com.diffplug.gradle.spotless.SpotlessPlugin>()
         // only check changes from _main
         extensions.configure<com.diffplug.gradle.spotless.SpotlessExtension> {
@@ -52,7 +58,7 @@ rootProject {
                 target("**/*.xml")
                 targetExclude("**/build/**/*.xml")
                 // Look for the first XML tag that isn't a comment (<!--) or the xml declaration (<?xml)
-                licenseHeaderFile(rootProject.file("spotless/copyright.xml"), "(<[^!?])")
+                licenseHeaderFile(rootProject.file("spotless/copyright.xml"), "(<[^!?])") 
             }
         }
     }

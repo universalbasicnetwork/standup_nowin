@@ -1,0 +1,8 @@
+{
+  "client_id": "PREFIX.apps.googleusercontent.com",
+  "redirect_uri": "com.googleusercontent.apps.PREFIX/oauth2redirect",
+  "end_session_redirect_uri": "com.googleusercontent.apps.PREFIX/oauth2redirect",
+  "authorization_scope": "openid email profile https://www.googleapis.com/auth/youtube.readonly",
+  "discovery_uri": "https://accounts.google.com/.well-known/openid-configuration",
+  "https_required": true
+}

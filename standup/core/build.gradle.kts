@@ -1,42 +1,31 @@
 /* Copyright 2023 Jay Bobzin SPDX-License-Identifier: Apache-2.0 */
 
 plugins {
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.nowinandroid.android.library)
     alias(libs.plugins.nowinandroid.android.library.compose)
+//    alias(libs.plugins.nowinandroid.android.room)
     alias(libs.plugins.nowinandroid.android.hilt)
 }
 
 android {
-    namespace = "com.jaybobzin.standup.integration.youtube"
-    buildFeatures {
-        viewBinding = true
-    }
+    namespace = "com.jaybobzin.standup.core"
     unitTestVariants.all {
         this.mergedFlavor.manifestPlaceholders["appAuthRedirectScheme"] = "com.jaybobzin.standup.nowin.app"
     }
 }
 
-configurations {
-    all {
-        exclude( group= "org.apache.httpcomponents", module= "httpclient")
-    }
-}
-
-
 dependencies {
+    implementation(projects.standup.integration.youtube)
+    implementation(projects.standup.integration.openid)
     implementation(projects.standup.data.auth)
     implementation(projects.standup.common.compose)
 
-    api(libs.androidx.credentials.credentials)
-    api(libs.androidx.credentials.play.services.auth)
-    api(libs.openid.appauth)
-    api(libs.easypermissions)
-    api(libs.google.api.client.android)
-    api(libs.google.api.services.youtube)
-    api(libs.google.http.client)
-    api(libs.google.id)
-
-    implementation(libs.gson)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.coroutines.guava)
 
     testImplementation(projects.core.testing)
 }

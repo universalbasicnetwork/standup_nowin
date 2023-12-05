@@ -35,8 +35,13 @@ dependencyResolutionManagement {
 rootProject.name = "standup_nowin"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include(":standup:app")
+include(":standup:core")
 include(":standup:integration:youtube")
+include(":standup:integration:openid")
+include(":standup:data:auth")
+include(":standup:common:compose")
 
 include(":app")
 include(":app-nia-catalog")
