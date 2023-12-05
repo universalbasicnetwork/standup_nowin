@@ -25,8 +25,8 @@ import com.google.api.client.json.JsonFactory
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeRequestInitializer
-import com.google.api.services.youtube.model.Playlist
 import com.jaybobzin.standup.data.auth.AuthDataManager
+import com.jaybobzin.standup.integration.youtube.YtData.PlaylistDao
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +45,7 @@ class SuYtManager @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
     private val config: Config,
     private val authDataManager: AuthDataManager,
+    private val playlistDao: PlaylistDao
 ) {
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
@@ -57,7 +58,7 @@ class SuYtManager @Inject constructor(
     }
 
     val googleLogin: MutableStateFlow<GoogleLogin?> = MutableStateFlow(null)
-    val playlistList: MutableStateFlow<List<Playlist>?> = MutableStateFlow(null)
+//    val playlistList: MutableStateFlow<List<Playlist>?> = MutableStateFlow(null)
 
     private var credentialManager: CredentialManager = CredentialManager.create(applicationContext)
 
@@ -220,7 +221,7 @@ class SuYtManager @Inject constructor(
                 }
                 if (!list.isNullOrEmpty()) {
                     Timber.tag(TAG).i("List returned: ${list.size}")
-                    playlistList.value = list.items.toList()
+                    playlistDao.addPlaylist(YtData.Transformer.transform(list.items).toList())
                 } else {
                     Timber.tag(TAG).d("List is empty")
                 }

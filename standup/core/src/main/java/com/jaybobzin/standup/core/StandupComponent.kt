@@ -26,7 +26,7 @@ internal object StandupComponent {
         LaunchedEffect(key1 = tokens) {
             viewModel.ytManager.fetchData()
         }
-        val playlistList = viewModel.ytManager.playlistList.collectAsStateWithLifecycle().value
+        val playlistList = viewModel.playlists.collectAsStateWithLifecycle().value
 
         LazyColumn {
             countdownVal?.let {
@@ -47,7 +47,7 @@ internal object StandupComponent {
                     item { Text(text = "$tokens") }
                 } else {
                     items(items = playlistList, key = { it.id }) { playlist ->
-                        Text("${playlist.id} : ${playlist.kind} : ${playlist.snippet} \n $playlist")
+                        Text("${playlist.id} : ${playlist.title} : ${playlist.description} \n $playlist")
                     }
                 }
             }

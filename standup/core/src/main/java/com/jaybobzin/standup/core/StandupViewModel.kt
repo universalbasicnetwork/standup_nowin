@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.jaybobzin.standup.common.compose.stateInDefaults
 import com.jaybobzin.standup.integration.youtube.SuForegroundServiceBinder
 import com.jaybobzin.standup.integration.youtube.SuYtManager
+import com.jaybobzin.standup.integration.youtube.YtData.PlaylistDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class StandupViewModel @Inject constructor(
     @ApplicationContext applicationContext: Context,
     val ytManager: SuYtManager,
+    private val playlistDao: PlaylistDao
 ) : ViewModel() {
 
     private val mutableYtBinder: MutableStateFlow<SuForegroundServiceBinder?> = MutableStateFlow(null)
@@ -31,15 +33,8 @@ class StandupViewModel @Inject constructor(
         mutableYtBinder.value = binder
     }
 
-//    val mutableActivityFlow: MutableStateFlow<StandupActivity?> = MutableStateFlow(null)
+    val playlists = playlistDao.getPlaylists().stateInDefaults(viewModelScope)
 
-//    val accountsFlow : StateFlow<List<Account>?> = mutableActivityFlow.map {
-//        if (it == null) null else {
-// //            val am = AccountManager.get(it)
-// //            am.accounts.toList()
-//            listOf<Account>()
-//        }
-//    }.stateInDefaults( scope = viewModelScope )
 
     val countdownFlow: StateFlow<Int?> = ytBinder.flatMapLatest {
         it?.countdownFlow ?: flowOf(null)

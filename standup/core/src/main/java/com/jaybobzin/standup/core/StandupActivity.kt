@@ -32,16 +32,6 @@ class StandupActivity : ComponentActivity() {
         setContent {
             StandupComponent.Content(Deps(this))
         }
-//        viewModel.ytManager.getGoogleId(this)
-//        viewModel.ytManager.signInWithGoogle(this)
-//        viewModel.ytManager.authorize()
-
-//        viewModel.mutableActivityFlow.value = this
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-//        viewModel.mutableActivityFlow.value = null
     }
 
     override fun onStart() {

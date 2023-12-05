@@ -45,6 +45,7 @@ class SuForegroundService() : Service() {
 
     override fun onBind(intent: Intent?): IBinder {
         Timber.tag(TAG).i("onBind($intent)")
+        ytManager.fetchData()
         return binder
     }
 

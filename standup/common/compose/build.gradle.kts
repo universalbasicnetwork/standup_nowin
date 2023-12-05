@@ -19,6 +19,7 @@ dependencies {
     api(libs.androidx.hilt.navigation.compose)
 
     api(libs.kotlinx.coroutines.android)
+    api(libs.kotlinx.datetime)
     api(libs.kotlinx.serialization.json)
 
     api(libs.timber)
